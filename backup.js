@@ -5,13 +5,13 @@ form.addEventListener("submit", async function (e) {
   e.preventDefault();
   const harapanUser = document.getElementById("harapan").value.trim();
   hasilDiv.innerHTML = "⏳ Memproses harapan Anda...";
-/*
-  const geminiKey = "AIzaSyBFLY_iHSfOb96YjKPTr7ukUp3f9fCJPrU"; 
+
+  const geminiKey = "AIzaSyBFLY_iHSfOb96YjKPTr7ukUp3f9fCJPrU"; // Ganti dengan key Gemini kamu
   const firebaseURL = "https://alkindi-24a1a-default-rtdb.firebaseio.com/books.json";
-*/
+
   try {
     // 1. Ambil semua data buku dari Firebase
-    const booksRes = await fetch("/.netlify/functions/firebase");
+    const booksRes = await fetch(firebaseURL);
     const books = await booksRes.json();
 
 
@@ -35,7 +35,7 @@ Tentukan ID buku (hanya 1 angka saja) yang paling relevan untuk mendukung perkem
 Jawab hanya berupa angka ID buku tanpa penjelasan.
 `;
 
-    const geminiRes = await fetch("/.netlify/functions/gemini", {
+    const geminiRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
