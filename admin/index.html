@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Buku Alkindikids</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Manajemen Buku Alkindikids</h1>
+
+        <div class="form-section">
+            <h2>Tambah/Update Buku</h2>
+            <form id="bookForm">
+                <input type="hidden" id="bookId">
+
+                <label for="title">Judul Buku:</label>
+                <input type="text" id="title" required>
+
+                <label for="description">Deskripsi:</label>
+                <textarea id="description" rows="4" required></textarea>
+
+                <label for="orderLink">Link Order:</label>
+                <input type="url" id="orderLink" required>
+
+                <label for="imageUpload">Upload Gambar:</label>
+                <button type="button" id="openCloudinaryWidget">Pilih/Upload Gambar</button>
+                <p id="currentImageLink" style="font-size: 0.9em; margin-top: 5px;"></p>
+                <input type="hidden" id="imageLinkInput" value=""> 
+
+                <button type="submit" id="submitBtn">Tambah Buku</button>
+                <button type="button" id="cancelBtn" style="display: none;">Batal Edit</button>
+            </form>
+        </div>
+
+        <hr>
+
+        <div class="book-list-section">
+            <h2>Daftar Buku</h2>
+            <div id="bookList" class="book-grid">
+                <p id="loadingMessage">Memuat buku...</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
