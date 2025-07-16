@@ -5,6 +5,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alkindi - Rekomendasi Buku Islami</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: 'Comic Sans MS', cursive, sans-serif; /* Playful font */
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(to right top, #FFD1DC, #A2D2FF, #B3F0A2); /* Gentle, colorful gradient */
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    /* Container for the main content */
+    .container {
+      background-color: #FFFFFF; /* White background for content */
+      border-radius: 25px; /* Softer rounded corners */
+      padding: 40px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); /* More pronounced shadow for depth */
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      border: 5px solid #FFC0CB; /* Pink border */
+    }
+
+    /* Heading Styles */
+    h1 {
+      color: #FF69B4; /* Bright pink */
+      font-size: 2.8em; /* Larger font size */
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Subtle text shadow */
+    }
+
+    /* Paragraph Styles */
+    p {
+      color: #555;
+      font-size: 1.3em; /* Slightly larger text */
+      margin-bottom: 30px;
+    }
+
+    /* Textarea Styles */
+    textarea {
+      width: calc(100% - 20px); /* Adjust width to account for padding */
+      padding: 15px;
+      border: 3px solid #87CEEB; /* Sky blue border */
+      border-radius: 15px; /* Rounded corners for textarea */
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      font-size: 1.1em;
+      resize: vertical; /* Allow vertical resizing */
+      min-height: 120px;
+      box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1); /* Inner shadow for depth */
+      transition: border-color 0.3s ease;
+    }
+
+    textarea:focus {
+      border-color: #FFA07A; /* Light salmon on focus */
+      outline: none;
+    }
+
+    /* Button Styles */
+    button {
+      background-color: #FFD700; /* Gold color for button */
+      color: #FFF;
+      border: none;
+      border-radius: 25px; /* Fully rounded button */
+      padding: 15px 30px;
+      font-size: 1.4em; /* Larger font for button text */
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* More prominent shadow */
+      transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px; /* Space between icon and text */
+    }
+
+    button:hover {
+      background-color: #FFC0CB; /* Pink on hover */
+      transform: translateY(-3px); /* Slight lift effect */
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    button:active {
+      transform: translateY(0); /* Press down effect */
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Output Box Styles */
+    .output-box {
+      margin-top: 30px;
+      padding: 25px;
+      background-color: #E0FFFF; /* Light cyan background for output */
+      border: 3px dashed #98FB98; /* Pale green dashed border */
+      border-radius: 20px;
+      min-height: 100px;
+      text-align: left;
+      font-size: 1.1em;
+      color: #444;
+      box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.1); /* Inner shadow */
+    }
+  </style>
 </head>
 <body>
   <div class="container">
