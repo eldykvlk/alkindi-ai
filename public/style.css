@@ -73,22 +73,3 @@ img {
   100% { background-position: -200% 0; }
 }
 
-.beli-btn {
-  display: inline-block;
-  margin-top: 20px;
-  background: linear-gradient(to right, #f093fb, #f5576c); /* Pink ke merah */
-  color: white;
-  padding: 12px 25px;
-  font-size: 1.2em;
-  font-weight: bold;
-  text-decoration: none;
-  border-radius: 30px;
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-}
-
-.beli-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(to right, #ff758c, #ff7eb3); /* Hover gradient */
-}

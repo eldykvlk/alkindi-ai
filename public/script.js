@@ -1,5 +1,11 @@
 const form = document.getElementById("harapanForm");
 const hasilDiv = document.getElementById("hasil");
+const menuBtn = document.getElementById('menu-btn');
+const mobileMenu = document.getElementById('mobile-menu');
+
+menuBtn.addEventListener('click', () => {
+  mobileMenu.classList.toggle('hidden');
+});
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
