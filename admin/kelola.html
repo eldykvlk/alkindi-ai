@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Admin Pengguna</title>
+    <link rel="stylesheet" href=kelola.css>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Kelola Admin Pengguna</h1>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span id="loggedInUsername"></span> | <button id="logoutBtn">Logout</button>
+        </div>
+
+        <hr>
+
+        <div class="admin-management-section">
+            <h2>Daftar Admin</h2>
+            <div id="adminList">
+                <p id="loadingAdmins">Memuat daftar admin...</p>
+            </div>
+            <button onclick="location.href='admin.html'" style="margin-top: 20px; padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Kembali ke Manajemen Buku</button>
+        </div>
+    </div>
+
+    <script>
+        // Konfigurasi Firebase Anda (harus sama dengan login.html dan admin.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBYY5VTaOHFHeBgyuevFYzwqY3v0xixktw",
+            authDomain: "alkindi-24a1a.firebaseapp.com",
+            databaseURL: "https://alkindi-24a1a-default-rtdb.firebaseio.com",
+            projectId: "alkindi-24a1a",
+            messagingSenderId: "55610192397",
+            appId: "1:55610192397:web:8fb5027b86c48d595b1b44",
+            measurementId: "G-4EPQVYKMME"
+        };
+
+        // Inisialisasi Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+        const adminRef = database.ref('admin'); // Path to your admin users
+
+        const loggedInUsernameSpan = document.getElementById('loggedInUsername');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminListDiv = document.getElementById('adminList');
+        const loadingAdminsMessage = document.getElementById('loadingAdmins');
+
+        // --- Session Check and Redirect (diulang di sini untuk keamanan) ---
+        const checkLogin = () => {
+            const loggedInUser = localStorage.getItem('loggedInUser');
+            if (!loggedInUser) {
+                window.location.href = 'login.html'; // No user logged in, redirect
+                return null;
+            }
+            const user = JSON.parse(loggedInUser);
+            // Hanya izinkan admin yang statusnya 'acc' untuk masuk ke halaman kelola.html
+            if (user.adminStatus !== 'acc') {
+                alert('Anda tidak memiliki akses untuk melihat halaman ini. Silakan login sebagai admin yang disetujui.');
+                window.location.href = 'login.html';
+                return null;
+            }
+            loggedInUsernameSpan.textContent = `Welcome, ${user.username}`;
+            return user;
+        };
+
+        const currentUser = checkLogin();
+        if (!currentUser) {
+            // Jika checkLogin mengalihkan, script akan berhenti eksekusi.
+            // Tidak perlu ada kode di sini karena redirect sudah terjadi.
+        }
+
+        // --- Logout Functionality ---
+        logoutBtn.addEventListener('click', () => {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'login.html';
+        });
+
+        // --- Admin Management Section ---
+        const renderAdminList = (admins) => {
+            adminListDiv.innerHTML = ''; // Clear previous list
+            loadingAdminsMessage.style.display = 'none'; // Sembunyikan pesan loading
+
+            // Filter admin yang sedang login agar tidak muncul di daftar untuk dimodifikasi
+            const filteredAdmins = Object.values(admins).filter(admin => admin.id !== currentUser.id);
+
+            if (filteredAdmins.length === 0) {
+                adminListDiv.innerHTML = '<p>Tidak ada pengguna admin lain yang dapat dikelola.</p>';
+                return;
+            }
+
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+            table.innerHTML = `
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Username</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Status</th>
+                        <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminTableBody"></tbody>
+            `;
+            adminListDiv.appendChild(table);
+            const adminTableBody = document.getElementById('adminTableBody');
+
+            filteredAdmins.forEach(admin => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="padding: 8px; border: 1px solid #ddd;">${admin.username || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Approved' : 'Pending'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">
+                        <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn" style="margin-right: 5px;">
+                            ${admin.admin === 'acc' ? 'Cabut Akses' : 'Berikan Akses'}
+                        </button>
+                        <button data-id="${admin.id}" class="delete-admin-btn" style="background-color: #dc3545; color: white;">Hapus</button>
+                    </td>
+                `;
+                adminTableBody.appendChild(row);
+            });
+
+            // Event Listener untuk tombol status
+            document.querySelectorAll('.toggle-admin-status-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const adminIdToUpdate = e.target.dataset.id;
+                    const currentStatus = e.target.dataset.status;
+                    const newStatus = currentStatus === 'acc' ? 'not' : 'acc';
+
+                    try {
+                        await adminRef.child(adminIdToUpdate).update({ admin: newStatus });
+                        alert(`Status admin untuk ${e.target.parentNode.previousElementSibling.previousElementSibling.textContent} diperbarui menjadi "${newStatus}".`);
+                    } catch (error) {
+                        console.error('Error updating admin status:', error);
+                        alert('Gagal memperbarui status admin.');
+                    }
+                });
+            });
+
+            // Event Listener untuk tombol hapus
+            document.querySelectorAll('.delete-admin-btn').forEach(button => {
+                button.addEventListener('click', async (e) => {
+                    const adminIdToDelete = e.target.dataset.id;
+                    const adminUsername = e.target.parentNode.previousElementSibling.previousElementSibling.textContent; // Mengambil username dari kolom sebelumnya
+
+                    if (confirm(`Apakah Anda yakin ingin menghapus admin "${adminUsername}"? Tindakan ini tidak dapat dibatalkan.`)) {
+                        try {
+                            await adminRef.child(adminIdToDelete).remove();
+                            alert(`Admin "${adminUsername}" berhasil dihapus!`);
+                        } catch (error) {
+                            console.error('Error deleting admin:', error);
+                            alert('Gagal menghapus admin. Silakan coba lagi.');
+                        }
+                    }
+                });
+            });
+        };
+
+        // Listen for changes in the 'admin' node
+        adminRef.on('value', (snapshot) => {
+            const admins = snapshot.val();
+            if (admins) {
+                renderAdminList(admins);
+            } else {
+                adminListDiv.innerHTML = '<p>Belum ada pengguna admin terdaftar.</p>';
+                loadingAdminsMessage.style.display = 'none';
+            }
+        }, (error) => {
+            console.error('Error fetching admin data:', error);
+            adminListDiv.innerHTML = '<p>Terjadi kesalahan saat memuat data admin.</p>';
+            loadingAdminsMessage.style.display = 'none';
+        });
+    </script>
+</body>
+</html>

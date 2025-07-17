@@ -247,3 +247,109 @@ function resetForm() {
     currentImageLink = null;
     submitBtn.disabled = false; // Pastikan tombol submit aktif setelah reset
 }
+
+const adminRef = database.ref('admin');
+const loggedInUsernameSpan = document.getElementById('loggedInUsername');
+const logoutBtn = document.getElementById('logoutBtn');
+const adminListDiv = document.getElementById('adminList');
+const loadingAdminsMessage = document.getElementById('loadingAdmins');
+
+// --- Session Check and Redirect ---
+const checkLogin = () => {
+    const loggedInUser = localStorage.getItem('loggedInUser');
+    if (!loggedInUser) {
+        window.location.href = 'login.html'; // No user logged in, redirect
+        return null;
+    }
+    const user = JSON.parse(loggedInUser);
+    if (user.adminStatus !== 'acc') {
+        window.location.href = 'login.html'; // Not an approved admin, redirect
+        return null;
+    }
+    loggedInUsernameSpan.textContent = `Welcome, ${user.username}`;
+    return user;
+};
+
+const currentUser = checkLogin();
+if (!currentUser) {
+    // If checkLogin redirected, the script will stop execution anyway.
+    // This is just to prevent further code from running if redirect happened.
+}
+
+// --- Logout Functionality ---
+logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('loggedInUser');
+    window.location.href = 'login.html';
+});
+
+// --- Admin Management Section ---
+const renderAdminList = (admins) => {
+    adminListDiv.innerHTML = ''; // Clear previous list
+    if (Object.keys(admins).length === 0) {
+        adminListDiv.innerHTML = '<p>No other admin users found.</p>';
+        return;
+    }
+
+    const table = document.createElement('table');
+    table.style.width = '100%';
+    table.style.borderCollapse = 'collapse';
+    table.innerHTML = `
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Username</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Status</th>
+                <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Actions</th>
+            </tr>
+        </thead>
+        <tbody id="adminTableBody"></tbody>
+    `;
+    adminListDiv.appendChild(table);
+    const adminTableBody = document.getElementById('adminTableBody');
+
+    Object.values(admins).forEach(admin => {
+        // Don't show the currently logged-in admin in the list for modification
+        if (admin.id === currentUser.id) return;
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td style="padding: 8px; border: 1px solid #ddd;">${admin.username}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Approved' : 'Pending'}</td>
+            <td style="padding: 8px; border: 1px solid #ddd;">
+                <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn">
+                    ${admin.admin === 'acc' ? 'Revoke Access' : 'Grant Access'}
+                </button>
+            </td>
+        `;
+        adminTableBody.appendChild(row);
+    });
+
+    document.querySelectorAll('.toggle-admin-status-btn').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            const adminIdToUpdate = e.target.dataset.id;
+            const currentStatus = e.target.dataset.status;
+            const newStatus = currentStatus === 'acc' ? 'not' : 'acc';
+
+            try {
+                await adminRef.child(adminIdToUpdate).update({ admin: newStatus });
+                alert(`Admin status for ${e.target.parentNode.previousElementSibling.previousElementSibling.textContent} updated to "${newStatus}".`);
+            } catch (error) {
+                console.error('Error updating admin status:', error);
+                alert('Failed to update admin status.');
+            }
+        });
+    });
+};
+
+// Listen for changes in the 'admin' node
+adminRef.on('value', (snapshot) => {
+    loadingAdminsMessage.style.display = 'none'; // Hide loading message
+    const admins = snapshot.val();
+    if (admins) {
+        renderAdminList(admins);
+    } else {
+        adminListDiv.innerHTML = '<p>No admin users registered yet.</p>';
+    }
+}, (error) => {
+    console.error('Error fetching admin data:', error);
+    adminListDiv.innerHTML = '<p>Error loading admin data.</p>';
+});
