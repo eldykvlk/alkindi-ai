@@ -19,8 +19,24 @@
 
         <div class="admin-management-section">
             <h2>Daftar Admin</h2>
+            <div class="filter-and-pagination-controls" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <label for="filterAdminStatus" style="font-weight: bold;">Filter Status:</label>
+                <select id="filterAdminStatus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="all">Semua Status</option>
+                    <option value="acc">Disetujui</option>
+                    <option value="not">Menunggu</option>
+                </select>
+                
+                <label for="searchAdminUsername" style="font-weight: bold; margin-left: 20px;">Cari Username:</label>
+                <input type="text" id="searchAdminUsername" placeholder="Cari berdasarkan username..." style="flex-grow: 1; min-width: 150px; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            </div>
             <div id="adminList">
                 <p id="loadingAdmins">Memuat daftar admin...</p>
+            </div>
+            <div class="pagination-controls" style="text-align: center; margin-top: 20px;">
+                <button id="prevAdminPageBtn" style="margin-right: 10px;">Sebelumnya</button>
+                <span id="currentAdminPageInfo">Halaman 1</span>
+                <button id="nextAdminPageBtn" style="margin-left: 10px;">Berikutnya</button>
             </div>
             <button onclick="location.href='admin.html'" style="margin-top: 20px; padding: 10px 20px; background-color: #6c757d; color: white; border: none; border-radius: 4px; cursor: pointer;">Kembali ke Manajemen Buku</button>
         </div>
@@ -47,6 +63,19 @@
         const logoutBtn = document.getElementById('logoutBtn');
         const adminListDiv = document.getElementById('adminList');
         const loadingAdminsMessage = document.getElementById('loadingAdmins');
+
+        // Elemen-elemen DOM untuk filter, pencarian, dan paginasi admin
+        const filterAdminStatusSelect = document.getElementById('filterAdminStatus');
+        const searchAdminUsernameInput = document.getElementById('searchAdminUsername'); // Elemen baru
+        const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
+        const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
+        const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
+
+        // --- Variabel untuk Paginasi, Pencarian, dan Filter Admin ---
+        let allAdmins = []; // Menyimpan semua admin yang dimuat dari Firebase
+        const adminItemsPerPage = 5; // Jumlah admin per halaman
+        let currentAdminPage = 1;
+        let filteredAndSearchedAdmins = []; // Menyimpan admin setelah filter dan pencarian
 
         // --- Session Check and Redirect (diulang di sini untuk keamanan) ---
         const checkLogin = () => {
@@ -78,16 +107,43 @@
             window.location.href = 'login.html';
         });
 
-        // --- Admin Management Section ---
-        const renderAdminList = (admins) => {
+        // --- Admin Management Section (Diperbarui dengan Filter, Pencarian & Paginasi) ---
+        const renderAdminList = () => {
             adminListDiv.innerHTML = ''; // Clear previous list
             loadingAdminsMessage.style.display = 'none'; // Sembunyikan pesan loading
 
-            // Filter admin yang sedang login agar tidak muncul di daftar untuk dimodifikasi
-            const filteredAdmins = Object.values(admins).filter(admin => admin.id !== currentUser.id);
+            // Apply status filter AND username search filter
+            const selectedStatus = filterAdminStatusSelect.value;
+            const searchTerm = searchAdminUsernameInput.value.toLowerCase();
 
-            if (filteredAdmins.length === 0) {
-                adminListDiv.innerHTML = '<p>Tidak ada pengguna admin lain yang dapat dikelola.</p>';
+            filteredAndSearchedAdmins = allAdmins.filter(admin => {
+                // Jangan tampilkan admin yang sedang login di daftar untuk modifikasi
+                if (currentUser && admin.id === currentUser.id) {
+                    return false;
+                }
+
+                const matchesStatus = (selectedStatus === 'all' || admin.admin === selectedStatus);
+                const matchesSearch = (admin.username && admin.username.toLowerCase().includes(searchTerm));
+
+                return matchesStatus && matchesSearch;
+            });
+
+            // Calculate pagination values for admins
+            const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
+            currentAdminPage = Math.min(currentAdminPage, totalAdminPages > 0 ? totalAdminPages : 1);
+            currentAdminPage = Math.max(currentAdminPage, 1);
+
+            const startAdminIndex = (currentAdminPage - 1) * adminItemsPerPage;
+            const endAdminIndex = startAdminIndex + adminItemsPerPage;
+            const adminsToDisplay = filteredAndSearchedAdmins.slice(startAdminIndex, endAdminIndex);
+
+            // Update pagination info for admins
+            currentAdminPageInfo.textContent = `Halaman ${currentAdminPage} dari ${totalAdminPages > 0 ? totalAdminPages : 1}`;
+            prevAdminPageBtn.disabled = currentAdminPage === 1;
+            nextAdminPageBtn.disabled = currentAdminPage === totalAdminPages || totalAdminPages === 0;
+
+            if (adminsToDisplay.length === 0) {
+                adminListDiv.innerHTML = '<p>Tidak ada pengguna admin yang ditemukan dengan kriteria ini.</p>';
                 return;
             }
 
@@ -107,11 +163,11 @@
             adminListDiv.appendChild(table);
             const adminTableBody = document.getElementById('adminTableBody');
 
-            filteredAdmins.forEach(admin => {
+            adminsToDisplay.forEach(admin => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td style="padding: 8px; border: 1px solid #ddd;">${admin.username || 'N/A'}</td>
-                    <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Approved' : 'Pending'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Disetujui' : 'Menunggu'}</td>
                     <td style="padding: 8px; border: 1px solid #ddd;">
                         <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn" style="margin-right: 5px;">
                             ${admin.admin === 'acc' ? 'Cabut Akses' : 'Berikan Akses'}
@@ -143,7 +199,7 @@
             document.querySelectorAll('.delete-admin-btn').forEach(button => {
                 button.addEventListener('click', async (e) => {
                     const adminIdToDelete = e.target.dataset.id;
-                    const adminUsername = e.target.parentNode.previousElementSibling.previousElementSibling.textContent; // Mengambil username dari kolom sebelumnya
+                    const adminUsername = e.target.parentNode.previousElementSibling.previousElementSibling.textContent;
 
                     if (confirm(`Apakah Anda yakin ingin menghapus admin "${adminUsername}"? Tindakan ini tidak dapat dibatalkan.`)) {
                         try {
@@ -158,19 +214,51 @@
             });
         };
 
-        // Listen for changes in the 'admin' node
+        // Listen for changes in the 'admin' node (FETCH ALL ADMINS ONCE)
         adminRef.on('value', (snapshot) => {
+            loadingAdminsMessage.style.display = 'none'; // Hide loading message
             const admins = snapshot.val();
+            allAdmins = [];
             if (admins) {
-                renderAdminList(admins);
-            } else {
-                adminListDiv.innerHTML = '<p>Belum ada pengguna admin terdaftar.</p>';
-                loadingAdminsMessage.style.display = 'none';
+                Object.entries(admins).forEach(([id, admin]) => {
+                    allAdmins.push({ id, ...admin });
+                });
             }
+            // Sort admins by username for consistent display
+            allAdmins.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+            
+            currentAdminPage = 1; // Reset to first page on data change
+            renderAdminList(); // Render list with updated data
         }, (error) => {
             console.error('Error fetching admin data:', error);
             adminListDiv.innerHTML = '<p>Terjadi kesalahan saat memuat data admin.</p>';
             loadingAdminsMessage.style.display = 'none';
+        });
+
+        // --- Event Listeners untuk Filter, Pencarian, dan Paginasi Admin ---
+        filterAdminStatusSelect.addEventListener('change', () => {
+            currentAdminPage = 1; // Reset ke halaman pertama saat filter berubah
+            renderAdminList();
+        });
+
+        searchAdminUsernameInput.addEventListener('keyup', () => { // Event listener baru
+            currentAdminPage = 1; // Reset ke halaman pertama saat pencarian berubah
+            renderAdminList();
+        });
+
+        prevAdminPageBtn.addEventListener('click', () => {
+            if (currentAdminPage > 1) {
+                currentAdminPage--;
+                renderAdminList();
+            }
+        });
+
+        nextAdminPageBtn.addEventListener('click', () => {
+            const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
+            if (currentAdminPage < totalAdminPages) {
+                currentAdminPage++;
+                renderAdminList();
+            }
         });
     </script>
 </body>
