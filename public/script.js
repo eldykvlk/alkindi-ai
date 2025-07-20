@@ -35,8 +35,12 @@ ${daftarJudul}
 Dari harapan berikut:
 "${harapanUser}"
 
-Tentukan ID buku (hanya 1 angka saja) yang paling relevan untuk mendukung perkembangan anak sesuai harapan tersebut.
-Jawab hanya berupa angka ID buku tanpa penjelasan.
+Berikan solusi singkat dan relevan dari harapan tersebut, serta sebutkan satu hadits yang berkaitan. Setelah itu, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
+
+Contoh format output:
+Solusi: [Solusi singkat]
+Hadits: [Teks hadits]
+ID Buku: [ID buku]
 `;
 
   // Kirim prompt ke Gemini (via Netlify Function)
@@ -47,7 +51,16 @@ Jawab hanya berupa angka ID buku tanpa penjelasan.
   });
 
   const geminiData = await geminiRes.json();
-  const idTerpilih = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+  const responseText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+  // Parsing respons untuk mendapatkan solusi, hadits, dan ID buku
+  const solusiMatch = responseText.match(/Solusi: (.+)/);
+  const haditsMatch = responseText.match(/Hadits: (.+)/);
+  const idMatch = responseText.match(/ID Buku: (\d+)/);
+
+  const solusiSingkat = solusiMatch ? solusiMatch[1].trim() : "Tidak ditemukan solusi.";
+  const hadits = haditsMatch ? haditsMatch[1].trim() : "Tidak ditemukan hadits.";
+  const idTerpilih = idMatch ? idMatch[1].trim() : null;
 
   const buku = books[idTerpilih];
 
@@ -57,6 +70,8 @@ Jawab hanya berupa angka ID buku tanpa penjelasan.
   }
 
   hasilDiv.innerHTML = `
+    <p>💡 ${solusiSingkat}</p>
+    <p>📜 ${hadits}</p>
     <p>🌟 <strong>Rekomendasi Buku Islami untuk Anak Anda:</strong></p>
     <h3>${buku.title}</h3>
     <p>${buku.description}</p>
