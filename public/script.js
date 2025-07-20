@@ -1,11 +1,5 @@
 const form = document.getElementById("harapanForm");
 const hasilDiv = document.getElementById("hasil");
-const menuBtn = document.getElementById('menu-btn');
-const mobileMenu = document.getElementById('mobile-menu');
-
-menuBtn.addEventListener('click', () => {
-  mobileMenu.classList.toggle('hidden');
-});
 
 form.addEventListener("submit", async function (e) {
   e.preventDefault();
@@ -79,3 +73,4 @@ ID Buku: [ID buku]
     <p><a href="${buku.orderLink}" target="_blank" class="beli-btn">📘 Beli Buku di Sini</a></p>
   `;
 });
+
