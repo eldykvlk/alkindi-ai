@@ -70,7 +70,7 @@ ID Buku: [ID buku]
     <h3>${buku.title}</h3>
     <p>${buku.description}</p>
     <img src="${buku.imageLink}" alt="Gambar Buku">
-    <p><a href="${buku.orderLink}" target="_blank" class="beli-btn">📘 Beli Buku di Sini</a></p>
+    <p><a href="${buku.orderLink}" target="_blank" class="beli-btn">📘 Pesan buku ini</a></p>
   `;
 });
 
