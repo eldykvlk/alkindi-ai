@@ -59,10 +59,12 @@
         }
     }
 
-        // Inisialisasi Firebase
+    function initializeFirebase() {
+        // Inisialisasi Firebase hanya setelah konfigurasi dimuat
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         const adminRef = database.ref('admin'); // Path to your admin users
+    }
 
         const loggedInUsernameSpan = document.getElementById('loggedInUsername');
         const logoutBtn = document.getElementById('logoutBtn');
