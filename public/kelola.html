@@ -43,16 +43,21 @@
     </div>
 
     <script>
-        // Konfigurasi Firebase Anda (harus sama dengan login.html dan admin.html)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBYY5VTaOHFHeBgyuevFYzwqY3v0xixktw",
-            authDomain: "alkindi-24a1a.firebaseapp.com",
-            databaseURL: "https://alkindi-24a1a-default-rtdb.firebaseio.com",
-            projectId: "alkindi-24a1a",
-            messagingSenderId: "55610192397",
-            appId: "1:55610192397:web:8fb5027b86c48d595b1b44",
-            measurementId: "G-4EPQVYKMME"
-        };
+    let firebaseConfig = {}; // Deklarasikan di luar untuk lingkup yang lebih luas
+
+    async function fetchFirebaseConfig() {
+        try {
+            const response = await fetch('/.netlify/functions/login-config');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            firebaseConfig = await response.json();
+            initializeFirebase();
+        } catch (error) {
+            console.error('Error fetching Firebase config:', error);
+            document.getElementById('errorMessage').textContent = 'Gagal memuat konfigurasi. Silakan coba lagi.';
+        }
+    }
 
         // Inisialisasi Firebase
         firebase.initializeApp(firebaseConfig);
@@ -260,6 +265,8 @@
                 renderAdminList();
             }
         });
+
+        document.addEventListener('DOMContentLoaded', fetchFirebaseConfig);
     </script>
 </body>
 </html>
