@@ -4,509 +4,313 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kelola Admin Pengguna</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&amp;display=swap" rel="stylesheet"/>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="kelola.css">
-    <style>
-        /* Body background from artikel1.html */
-        body {
-            font-family: 'Comic Neue', cursive, sans-serif;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991);
-            margin: 0;
-        }
-
-        /* Navbar styles from artikel1.html */
-        header {
-            background-color: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            width: 100%;
-        }
-        nav {
-            max-width: 7xl;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-            padding-top: 1rem;
-            padding-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        nav a {
-            text-decoration: none;
-        }
-        nav ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        nav ul li a {
-            padding: 0.5rem 0;
-            display: block;
-        }
-        .text-pink-600 {
-            color: #db2777;
-        }
-        .text-pink-700 {
-            color: #be185d;
-        }
-        .text-pink-900 {
-            color: #831843;
-        }
-        .hover\:text-pink-900:hover {
-            color: #831843;
-        }
-        .bg-pink-600 {
-            background-color: #db2777;
-        }
-
-        /* Footer styles from artikel1.html */
-        footer {
-            background-color: #db2777;
-            color: white;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
-            margin-top: auto; /* Pushes footer to the bottom */
-            width: 100%;
-        }
-        footer .max-w-7xl {
-            max-width: 7xl;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1.5rem;
-            padding-right: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1.5rem;
-        }
-        @media (min-width: 768px) { /* md breakpoint */
-            nav ul {
-                display: flex;
-                column-gap: 2rem;
-            }
-            #mobile-menu {
-                display: none;
-            }
-            footer .max-w-7xl {
-                flex-direction: row;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href=kelola.css>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
-<body class="bg-gradient-to-b from-pink-200 via-yellow-200 to-green-200 min-h-screen flex flex-col">
-    <header class="bg-white bg-opacity-80 backdrop-blur-md shadow-md sticky top-0 z-50">
-        <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-            <a class="text-3xl font-extrabold text-pink-600 flex items-center gap-2" href="index.html">
-                <img src="image/logo-alkindi.png" alt="Alkindi Logo" class="h-14">
-            </a>
-            <ul class="hidden md:flex space-x-8 text-pink-700 font-semibold">
-                <li>
-                    <a class="hover:text-pink-900 transition" href="index.html">
-                        Beranda
-                    </a>
-                </li>
-                <li>
-                    <a class="hover:text-pink-900 transition" href="tentang-kami.html">
-                        Tentang kami
-                    </a>
-                </li>
-                <li>
-                    <a class="hover:text-pink-900 transition" href="bantuan.html">
-                        Bantuan
-                    </a>
-                </li>
-                <li class="relative group">
-                    <a class="hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-desktop">
-                        Lainnya
-                        <i class="fas fa-chevron-down text-xs ml-1"></i>
-                    </a>
-                    <div id="dropdown-menu-desktop" class="absolute hidden bg-white shadow-lg rounded-lg py-2 w-48 mt-2 -ml-4 z-10">
-                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
-                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
-                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
-                    </div>
-                </li>
-            </ul>
-            <button class="md:hidden text-pink-600 focus:outline-none" id="menu-btn">
-                <i class="fas fa-bars fa-2x">
-                </i>
-            </button>
-        </nav>
-        <div class="hidden md:hidden bg-white bg-opacity-90 backdrop-blur-md shadow-inner" id="mobile-menu">
-            <ul class="flex flex-col space-y-4 px-6 py-4 text-pink-700 font-semibold">
-                <li>
-                    <a class="block hover:text-pink-900 transition" href="index.html">
-                        Beranda
-                    </a>
-                </li>
-                <li>
-                    <a class="block hover:text-pink-900 transition" href="tentang-kami.html">
-                        Tentang kami
-                    </a>
-                </li>
-                <li>
-                    <a class="block hover:text-pink-900 transition" href="bantuan.html">
-                        Bantuan
-                    </a>
-                </li>
-                <li class="relative">
-                    <a class="block hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-mobile">
-                        Lainnya
-                        <i class="fas fa-chevron-down text-xs ml-1"></i>
-                    </a>
-                    <div id="dropdown-menu-mobile" class="hidden bg-white rounded-lg py-2 w-full mt-2 pl-4">
-                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
-                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
-                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
-                    </div>
-                </li>
-            </ul>
+<body>
+    <div class="container">
+        <h1>Kelola Admin Pengguna</h1>
+        <div style="text-align: right; margin-bottom: 20px;">
+            <span id="loggedInUsername"></span> | <button id="logoutBtn">Logout</button>
         </div>
-    </header>
 
-    <main class="flex-grow py-16 px-6">
-        <div class="container" style="max-width: 960px; margin: auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
-            <h1>Kelola Admin Pengguna</h1>
-            <div style="text-align: right; margin-bottom: 20px;">
-                <span id="loggedInUsername"></span> | <button id="logoutBtn">Logout</button>
+        <hr>
+
+        <div class="admin-management-section">
+            <h2>Daftar Admin</h2>
+            <div class="filter-and-pagination-controls" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                <label for="filterAdminStatus" style="font-weight: bold;">Filter Status:</label>
+                <select id="filterAdminStatus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+                    <option value="all">Semua Status</option>
+                    <option value="acc">Acc</option>
+                    <option value="not">Not Acc</option>
+                </select>
+
+                <input type="text" id="searchAdminUsername" placeholder="Cari berdasarkan username..." style="flex-grow: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc; max-width: 250px;">
             </div>
 
-            <hr>
+            <p id="loadingAdmins" style="text-align: center; margin-bottom: 10px;">Memuat daftar admin...</p>
 
-            <div class="admin-management-section">
-                <h2>Daftar Admin</h2>
-                <div class="filter-and-pagination-controls" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                    <label for="filterAdminStatus" style="font-weight: bold;">Filter Status:</label>
-                    <select id="filterAdminStatus" style="padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
-                        <option value="all">Semua Status</option>
-                        <option value="acc">Disetujui</option>
-                        <option value="not">Belum Disetujui</option>
-                    </select>
-                    <label for="searchAdminUsername" style="font-weight: bold;">Cari Username:</label>
-                    <input type="text" id="searchAdminUsername" placeholder="Ketik username..." style="flex-grow: 1; padding: 8px; border-radius: 4px; border: 1px solid #ccc;">
+            <div id="adminList">
                 </div>
-                <div class="admin-list-container">
-                    <table id="adminListTable">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Status</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminList">
-                            <tr>
-                                <td colspan="3" id="loadingAdminsMessage" style="text-align: center;">Memuat data admin...</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="pagination-controls" style="text-align: center; margin-top: 20px;">
-                    <button id="prevAdminPageBtn" style="margin-right: 10px;">Sebelumnya</button>
-                    <span id="currentAdminPageInfo">Halaman 1</span>
-                    <button id="nextAdminPageBtn" style="margin-left: 10px;">Berikutnya</button>
-                </div>
+
+            <div class="pagination-controls" style="text-align: center; margin-top: 20px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+                <button id="prevAdminPageBtn" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Sebelumnya</button>
+                <span id="currentAdminPageInfo" style="font-weight: bold;">Halaman 1</span>
+                <button id="nextAdminPageBtn" style="padding: 8px 15px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Selanjutnya</button>
             </div>
         </div>
-    </main>
-
-    <footer class="bg-pink-600 text-white py-8 mt-auto">
-        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
-            <p class="text-center md:text-left">
-                ©2025 Alkindi AI. All rights reserved.
-            </p>
-            <div class="flex space-x-6 text-2xl">
-                <a aria-label="WhatsApp" class="hover:text-pink-300 transition" href="https://wa.me/6287871367837">
-                    <i class="fab fa-whatsapp-square">
-                    </i>
-                </a>
-                <a aria-label="Instagram" class="hover:text-pink-300 transition" href="https://www.instagram.com/alkindikids/">
-                    <i class="fab fa-instagram-square">
-                    </i>
-                </a>
-                <a aria-label="YouTube" class="hover:text-pink-300 transition" href="https://www.youtube.com/channel/UCdkSM5ieNzioBzrFKpQe1yQ">
-                    <i class="fab fa-youtube-square">
-                    </i>
-                </a>
-            </div>
-        </div>
-    </footer>
+    </div>
 
     <script>
-        // Navbar mobile and desktop dropdown functionality from artikel1.html
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
+        // Konfigurasi Firebase (ganti dengan konfigurasi Firebase Anda yang sebenarnya)
+        let firebaseConfig = {};
 
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+        // Variabel global untuk elemen DOM (dideklarasikan di sini tapi diinisialisasi setelah DOMContentLoaded)
+        let loggedInUsernameSpan;
+        let logoutBtn;
+        let adminListDiv;
+        let loadingAdminsMessage;
+        let filterAdminStatusSelect;
+        let searchAdminUsernameInput;
+        let prevAdminPageBtn;
+        let nextAdminPageBtn;
+        let currentAdminPageInfo;
+
+        let adminRef;
+        let allAdmins = [];
+        let filteredAndSearchedAdmins = [];
+        let currentAdminPage = 1;
+        const adminItemsPerPage = 5;
+
+        // Fungsi untuk mengambil konfigurasi Firebase dari file JSON
+        const fetchFirebaseConfig = () => {
+            fetch('firebase-config.json')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(config => {
+                    firebaseConfig = config;
+                    initializeFirebase();
+                })
+                .catch(error => {
+                    console.error('Error fetching Firebase config:', error);
+                    alert('Gagal memuat konfigurasi Firebase. Pastikan firebase-config.json ada dan benar.');
+                });
+        };
+
+        // Fungsi untuk menginisialisasi Firebase App
+        const initializeFirebase = () => {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            adminRef = firebase.database().ref('admins');
+            loadAdminsAndSetupListeners();
+        };
+
+        // Memeriksa sesi login saat halaman dimuat
+        const checkLoginSession = () => {
+            const loggedInUserString = localStorage.getItem('loggedInUser');
+            if (!loggedInUserString) {
+                window.location.href = 'login.html';
+                return;
+            }
+            try {
+                const loggedInUser = JSON.parse(loggedInUserString);
+                if (loggedInUser.adminStatus !== 'acc') {
+                    alert('Anda tidak memiliki akses admin.');
+                    window.location.href = 'login.html';
+                } else {
+                    if (loggedInUsernameSpan) {
+                        loggedInUsernameSpan.textContent = `Login sebagai: ${loggedInUser.username}`;
+                    }
+                }
+            } catch (e) {
+                console.error('Error parsing loggedInUser from localStorage', e);
+                localStorage.removeItem('loggedInUser');
+                window.location.href = 'login.html';
+            }
+        };
+
+        const renderAdminList = () => {
+            if (adminListDiv) {
+                adminListDiv.innerHTML = ''; // Bersihkan daftar sebelum merender
+            }
+
+            const filterStatus = filterAdminStatusSelect ? filterAdminStatusSelect.value : 'all';
+            const searchTerm = searchAdminUsernameInput ? searchAdminUsernameInput.value.toLowerCase() : '';
+
+            filteredAndSearchedAdmins = allAdmins.filter(admin => {
+                const matchesStatus = filterStatus === 'all' || admin.admin === filterStatus;
+                const matchesSearch = searchTerm === '' || (admin.username && admin.username.toLowerCase().includes(searchTerm));
+                return matchesStatus && matchesSearch;
             });
-        }
 
-        const dropdownToggleDesktop = document.getElementById('dropdown-toggle-desktop');
-        const dropdownMenuDesktop = document.getElementById('dropdown-menu-desktop');
+            const startIndex = (currentAdminPage - 1) * adminItemsPerPage;
+            const endIndex = startIndex + adminItemsPerPage;
+            const adminsToDisplay = filteredAndSearchedAdmins.slice(startIndex, endIndex);
 
-        if (dropdownToggleDesktop) {
-            dropdownToggleDesktop.addEventListener('click', () => {
-                dropdownMenuDesktop.classList.toggle('hidden');
-            });
+            if (adminsToDisplay.length === 0) {
+                if (adminListDiv) {
+                    adminListDiv.innerHTML = '<p style="text-align: center;">Tidak ada data admin yang ditemukan.</p>';
+                }
+            } else {
+                const table = document.createElement('table');
+                table.style.width = '100%';
+                table.style.borderCollapse = 'collapse';
+                table.innerHTML = `
+                    <thead>
+                        <tr>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">Username</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: left; background-color: #f2f2f2;">Status</th>
+                            <th style="border: 1px solid #ddd; padding: 8px; text-align: center; background-color: #f2f2f2;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                `;
+                const tbody = table.querySelector('tbody');
 
-            document.addEventListener('click', (event) => {
-                if (!dropdownToggleDesktop.contains(event.target) && !dropdownMenuDesktop.contains(event.target)) {
-                    dropdownMenuDesktop.classList.add('hidden');
+                adminsToDisplay.forEach(admin => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="border: 1px solid #ddd; padding: 8px;">${admin.username}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px;">${admin.admin === 'acc' ? 'Acc' : 'Not Acc'}</td>
+                        <td style="border: 1px solid #ddd; padding: 8px; text-align: center;">
+                            <button class="toggle-status-btn" data-id="${admin.id}" data-status="${admin.admin}"
+                                style="padding: 6px 10px; border-radius: 4px; border: none; cursor: pointer; background-color: ${admin.admin === 'acc' ? '#dc3545' : '#28a745'}; color: white;">
+                                ${admin.admin === 'acc' ? 'Batalkan Acc' : 'Acc'}
+                            </button>
+                            <button class="delete-admin-btn" data-id="${admin.id}"
+                                style="padding: 6px 10px; border-radius: 4px; border: none; cursor: pointer; background-color: #ffc107; color: black; margin-left: 5px;">
+                                Hapus
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+                if (adminListDiv) {
+                    adminListDiv.appendChild(table);
+                }
+
+                // Attach event listeners to new buttons
+                document.querySelectorAll('.toggle-status-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const id = event.target.dataset.id;
+                        const currentStatus = event.target.dataset.status;
+                        const newStatus = currentStatus === 'acc' ? 'not' : 'acc';
+                        if (confirm(`Apakah Anda yakin ingin mengubah status admin ${id} menjadi ${newStatus === 'acc' ? 'Acc' : 'Not Acc'}?`)) {
+                            adminRef.child(id).update({ admin: newStatus })
+                                .then(() => {
+                                    alert('Status admin berhasil diubah.');
+                                })
+                                .catch(error => {
+                                    console.error('Error updating admin status:', error);
+                                    alert('Gagal mengubah status admin.');
+                                });
+                        }
+                    });
+                });
+
+                document.querySelectorAll('.delete-admin-btn').forEach(button => {
+                    button.addEventListener('click', (event) => {
+                        const id = event.target.dataset.id;
+                        if (confirm(`Apakah Anda yakin ingin menghapus admin ${id}?`)) {
+                            adminRef.child(id).remove()
+                                .then(() => {
+                                    alert('Admin berhasil dihapus.');
+                                })
+                                .catch(error => {
+                                    console.error('Error deleting admin:', error);
+                                    alert('Gagal menghapus admin.');
+                                });
+                        }
+                    });
+                });
+            }
+
+            const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
+            if (currentAdminPageInfo) {
+                currentAdminPageInfo.textContent = `Halaman ${currentAdminPage} dari ${totalAdminPages || 1}`;
+            }
+
+            if (prevAdminPageBtn) {
+                prevAdminPageBtn.disabled = currentAdminPage === 1;
+            }
+            if (nextAdminPageBtn) {
+                nextAdminPageBtn.disabled = currentAdminPage === (totalAdminPages || 1);
+            }
+        };
+
+        const loadAdminsAndSetupListeners = () => {
+            adminRef.on('value', (snapshot) => {
+                // Pastikan loadingAdminsMessage ada sebelum mengakses style
+                if (loadingAdminsMessage) {
+                    loadingAdminsMessage.style.display = 'none';
+                }
+                const admins = snapshot.val();
+                allAdmins = [];
+                if (admins) {
+                    Object.entries(admins).forEach(([id, admin]) => {
+                        allAdmins.push({ id, ...admin });
+                    });
+                }
+                allAdmins.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+
+                currentAdminPage = 1; // Reset halaman ke 1 setiap kali data berubah
+                renderAdminList();
+            }, (error) => {
+                console.error('Error fetching admin data:', error);
+                if (adminListDiv) {
+                    adminListDiv.innerHTML = '<p>Terjadi kesalahan saat memuat data admin.</p>';
+                }
+                if (loadingAdminsMessage) { // Tambahkan pengecekan null di sini juga
+                    loadingAdminsMessage.style.display = 'none';
                 }
             });
-        }
 
-        const dropdownToggleMobile = document.getElementById('dropdown-toggle-mobile');
-        const dropdownMenuMobile = document.getElementById('dropdown-menu-mobile');
+            // --- Event Listeners untuk Filter, Pencarian, dan Paginasi Admin ---
+            if (filterAdminStatusSelect) {
+                filterAdminStatusSelect.addEventListener('change', () => {
+                    currentAdminPage = 1;
+                    renderAdminList();
+                });
+            }
 
-        if (dropdownToggleMobile) {
-            dropdownToggleMobile.addEventListener('click', (event) => {
-                event.preventDefault();
-                dropdownMenuMobile.classList.toggle('hidden');
-            });
-        }
+            if (searchAdminUsernameInput) {
+                searchAdminUsernameInput.addEventListener('keyup', () => {
+                    currentAdminPage = 1;
+                    renderAdminList();
+                });
+            }
 
-           let firebaseConfig = {}; // Deklarasikan di luar untuk lingkup yang lebih luas
-    
-           async function fetchFirebaseConfig() {
-               try {
-                   const response = await fetch('/.netlify/functions/login-config');
-                   if (!response.ok) {
-                       throw new Error(`HTTP error! status: ${response.status}`);
-                   }
-                   firebaseConfig = await response.json();
-                   initializeFirebase();
-               } catch (error) {
-                   console.error('Error fetching Firebase config:', error);
-                   // Anda mungkin ingin menambahkan elemen pesan kesalahan di kelola.html jika belum ada
-                   // Misalnya: document.getElementById('generalErrorMessage').textContent = 'Gagal memuat konfigurasi. Silakan coba lagi.';
-               }
-           }
-       
-           let database; // Deklarasikan database dan adminRef di lingkup yang lebih luas
-           let adminRef;
-       
-           function initializeFirebase() {
-               // Inisialisasi Firebase hanya setelah konfigurasi dimuat
-               firebase.initializeApp(firebaseConfig);
-               database = firebase.database();
-               adminRef = database.ref('admin'); // Path to your admin users
-       
-               // Panggil fungsi untuk memuat data admin setelah Firebase diinisialisasi
-               loadAdminsAndSetupListeners();
-           }
-       
-               const loggedInUsernameSpan = document.getElementById('loggedInUsername');
-               const logoutBtn = document.getElementById('logoutBtn');
-               const adminListDiv = document.getElementById('adminList');
-               const loadingAdminsMessage = document.getElementById('loadingAdmins');
-       
-               // Elemen-elemen DOM untuk filter, pencarian, dan paginasi admin
-               const filterAdminStatusSelect = document.getElementById('filterAdminStatus');
-               const searchAdminUsernameInput = document.getElementById('searchAdminUsername');
-               const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
-               const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
-               const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
-       
-               // --- Variabel untuk Paginasi, Pencarian, dan Filter Admin ---
-               let allAdmins = [];
-               const adminItemsPerPage = 5;
-               let currentAdminPage = 1;
-               let filteredAndSearchedAdmins = [];
-       
-               // --- Session Check and Redirect (diulang di sini untuk keamanan) ---
-               const checkLogin = () => {
-                   const loggedInUser = localStorage.getItem('loggedInUser');
-                   if (!loggedInUser) {
-                       window.location.href = 'login.html';
-                       return null;
-                   }
-                   const user = JSON.parse(loggedInUser);
-                   if (user.adminStatus !== 'acc') {
-                       alert('Anda tidak memiliki akses untuk melihat halaman ini. Silakan login sebagai admin yang disetujui.');
-                       window.location.href = 'login.html';
-                       return null;
-                   }
-                   loggedInUsernameSpan.textContent = `Welcome, ${user.username}`;
-                   return user;
-               };
-       
-               const currentUser = checkLogin();
-               // Tidak perlu ada `if (!currentUser)` di sini karena redirect sudah dilakukan di `checkLogin`.
-       
-               // --- Logout Functionality ---
-               logoutBtn.addEventListener('click', () => {
-                   localStorage.removeItem('loggedInUser');
-                   window.location.href = 'login.html';
-               });
-       
-               // --- Admin Management Section (Diperbarui dengan Filter, Pencarian & Paginasi) ---
-               const renderAdminList = () => {
-                   adminListDiv.innerHTML = '';
-                   loadingAdminsMessage.style.display = 'none';
-       
-                   const selectedStatus = filterAdminStatusSelect.value;
-                   const searchTerm = searchAdminUsernameInput.value.toLowerCase();
-       
-                   filteredAndSearchedAdmins = allAdmins.filter(admin => {
-                       if (currentUser && admin.id === currentUser.id) {
-                           return false;
-                       }
-       
-                       const matchesStatus = (selectedStatus === 'all' || admin.admin === selectedStatus);
-                       const matchesSearch = (admin.username && admin.username.toLowerCase().includes(searchTerm));
-       
-                       return matchesStatus && matchesSearch;
-                   });
-       
-                   const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
-                   currentAdminPage = Math.min(currentAdminPage, totalAdminPages > 0 ? totalAdminPages : 1);
-                   currentAdminPage = Math.max(currentAdminPage, 1);
-       
-                   const startAdminIndex = (currentAdminPage - 1) * adminItemsPerPage;
-                   const endAdminIndex = startAdminIndex + adminItemsPerPage;
-                   const adminsToDisplay = filteredAndSearchedAdmins.slice(startAdminIndex, endAdminIndex);
-       
-                   currentAdminPageInfo.textContent = `Halaman ${currentAdminPage} dari ${totalAdminPages > 0 ? totalAdminPages : 1}`;
-                   prevAdminPageBtn.disabled = currentAdminPage === 1;
-                   nextAdminPageBtn.disabled = currentAdminPage === totalAdminPages || totalAdminPages === 0;
-       
-                   if (adminsToDisplay.length === 0) {
-                       adminListDiv.innerHTML = '<p>Tidak ada pengguna admin yang ditemukan dengan kriteria ini.</p>';
-                       return;
-                   }
-       
-                   const table = document.createElement('table');
-                   table.style.width = '100%';
-                   table.style.borderCollapse = 'collapse';
-                   table.innerHTML = `
-                       <thead>
-                           <tr style="background-color: #f2f2f2;">
-                               <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Username</th>
-                               <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Status</th>
-                               <th style="padding: 8px; border: 1px solid #ddd; text-align: left;">Actions</th>
-                           </tr>
-                       </thead>
-                       <tbody id="adminTableBody"></tbody>
-                   `;
-                   adminListDiv.appendChild(table);
-                   const adminTableBody = document.getElementById('adminTableBody');
-       
-                   adminsToDisplay.forEach(admin => {
-                       const row = document.createElement('tr');
-                       row.innerHTML = `
-                           <td style="padding: 8px; border: 1px solid #ddd;">${admin.username || 'N/A'}</td>
-                           <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Disetujui' : 'Menunggu'}</td>
-                           <td style="padding: 8px; border: 1px solid #ddd;">
-                               <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn" style="margin-right: 5px;">
-                                   ${admin.admin === 'acc' ? 'Cabut Akses' : 'Berikan Akses'}
-                               </button>
-                               <button data-id="${admin.id}" class="delete-admin-btn" style="background-color: #dc3545; color: white;">Hapus</button>
-                           </td>
-                       `;
-                       adminTableBody.appendChild(row);
-                   });
-       
-                   document.querySelectorAll('.toggle-admin-status-btn').forEach(button => {
-                       button.addEventListener('click', async (e) => {
-                           const adminIdToUpdate = e.target.dataset.id;
-                           const currentStatus = e.target.dataset.status;
-                           const newStatus = currentStatus === 'acc' ? 'not' : 'acc';
-       
-                           try {
-                               await adminRef.child(adminIdToUpdate).update({ admin: newStatus });
-                               alert(`Status admin untuk ${e.target.parentNode.previousElementSibling.previousElementSibling.textContent} diperbarui menjadi "${newStatus}".`);
-                           } catch (error) {
-                               console.error('Error updating admin status:', error);
-                               alert('Gagal memperbarui status admin.');
-                           }
-                       });
-                   });
-       
-                   document.querySelectorAll('.delete-admin-btn').forEach(button => {
-                       button.addEventListener('click', async (e) => {
-                           const adminIdToDelete = e.target.dataset.id;
-                           const adminUsername = e.target.parentNode.previousElementSibling.previousElementSibling.textContent;
-       
-                           if (confirm(`Apakah Anda yakin ingin menghapus admin "${adminUsername}"? Tindakan ini tidak dapat dibatalkan.`)) {
-                               try {
-                                   await adminRef.child(adminIdToDelete).remove();
-                                   alert(`Admin "${adminUsername}" berhasil dihapus!`);
-                               } catch (error) {
-                                   console.error('Error deleting admin:', error);
-                                   alert('Gagal menghapus admin. Silakan coba lagi.');
-                               }
-                           }
-                       });
-                   });
-               };
-       
-               // Fungsi untuk memuat admin dan menyiapkan listener
-               const loadAdminsAndSetupListeners = () => {
-                    // Listen for changes in the 'admin' node (FETCH ALL ADMINS ONCE)
-                   adminRef.on('value', (snapshot) => {
-                       loadingAdminsMessage.style.display = 'none';
-                       const admins = snapshot.val();
-                       allAdmins = [];
-                       if (admins) {
-                           Object.entries(admins).forEach(([id, admin]) => {
-                               allAdmins.push({ id, ...admin });
-                           });
-                       }
-                       allAdmins.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
-                       
-                       currentAdminPage = 1;
-                       renderAdminList();
-                   }, (error) => {
-                       console.error('Error fetching admin data:', error);
-                       adminListDiv.innerHTML = '<p>Terjadi kesalahan saat memuat data admin.</p>';
-                       loadingAdminsMessage.style.display = 'none';
-                   });
-       
-                   // --- Event Listeners untuk Filter, Pencarian, dan Paginasi Admin ---
-                   filterAdminStatusSelect.addEventListener('change', () => {
-                       currentAdminPage = 1;
-                       renderAdminList();
-                   });
-       
-                   searchAdminUsernameInput.addEventListener('keyup', () => {
-                       currentAdminPage = 1;
-                       renderAdminList();
-                   });
-       
-                   prevAdminPageBtn.addEventListener('click', () => {
-                       if (currentAdminPage > 1) {
-                           currentAdminPage--;
-                           renderAdminList();
-                       }
-                   });
-       
-                   nextAdminPageBtn.addEventListener('click', () => {
-                       const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
-                       if (currentAdminPage < totalAdminPages) {
-                           currentAdminPage++;
-                           renderAdminList();
-                       }
-                   });
-               };
-       
-               // Panggil fungsi untuk mengambil konfigurasi saat halaman dimuat
-               document.addEventListener('DOMContentLoaded', fetchFirebaseConfig);
-           </script>
+            if (prevAdminPageBtn) {
+                prevAdminPageBtn.addEventListener('click', () => {
+                    if (currentAdminPage > 1) {
+                        currentAdminPage--;
+                        renderAdminList();
+                    }
+                });
+            }
+
+            if (nextAdminPageBtn) {
+                nextAdminPageBtn.addEventListener('click', () => {
+                    const totalAdminPages = Math.ceil(filteredAndSearchedAdmins.length / adminItemsPerPage);
+                    if (currentAdminPage < totalAdminPages) {
+                        currentAdminPage++;
+                        renderAdminList();
+                    }
+                });
+            }
+        };
+
+        // Panggil fungsi untuk mengambil konfigurasi saat halaman dimuat dan inisialisasi semua variabel DOM
+        document.addEventListener('DOMContentLoaded', () => {
+            loggedInUsernameSpan = document.getElementById('loggedInUsername');
+            logoutBtn = document.getElementById('logoutBtn');
+            adminListDiv = document.getElementById('adminList');
+            loadingAdminsMessage = document.getElementById('loadingAdmins');
+            filterAdminStatusSelect = document.getElementById('filterAdminStatus');
+            searchAdminUsernameInput = document.getElementById('searchAdminUsername');
+            prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
+            nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
+            currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
+
+            checkLoginSession();
+            fetchFirebaseConfig();
+
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    localStorage.removeItem('loggedInUser');
+                    window.location.href = 'login.html';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
