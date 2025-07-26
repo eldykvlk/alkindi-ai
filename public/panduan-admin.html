@@ -16,6 +16,12 @@
   </style>
  </head>
  <body class="bg-gradient-to-b from-pink-200 via-yellow-200 to-green-200 min-h-screen flex flex-col">
+  <script>
+    const isLoggedIn = localStorage.getItem('isLoggedIn'); 
+    if (!isLoggedIn || isLoggedIn !== 'true') {
+      window.location.href = 'index.html'; 
+    }
+  </script>
   <header class="bg-white bg-opacity-80 backdrop-blur-md shadow-md sticky top-0 z-50">
    <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
     <a class="text-3xl font-extrabold text-pink-600 flex items-center gap-2" href="index.html">
