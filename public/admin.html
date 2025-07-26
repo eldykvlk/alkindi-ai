@@ -4,62 +4,290 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manajemen AI Alkindikids</title>
-    <link rel="stylesheet" href="admin.css"> <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="admin.css"> <style>
+        /* Body background from artikel1.html */
+        body {
+            font-family: 'Comic Neue', cursive, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); /* */
+            margin: 0;
+        }
+
+        /* Navbar styles from artikel1.html */
+        header {
+            background-color: rgba(255, 255, 255, 0.8); /* */
+            backdrop-filter: blur(8px); /* */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* */
+            position: sticky; /* */
+            top: 0; /* */
+            z-index: 50; /* */
+            width: 100%; /* */
+        }
+        nav {
+            max-width: 7xl; /* */
+            margin-left: auto; /* */
+            margin-right: auto; /* */
+            padding-left: 1.5rem; /* */
+            padding-right: 1.5rem; /* */
+            padding-top: 1rem; /* */
+            padding-bottom: 1rem; /* */
+            display: flex; /* */
+            align-items: center; /* */
+            justify-content: space-between; /* */
+        }
+        nav a {
+            text-decoration: none;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            padding: 0.5rem 0;
+            display: block;
+        }
+        .text-pink-600 {
+            color: #db2777; /* */
+        }
+        .text-pink-700 {
+            color: #be185d; /* */
+        }
+        .text-pink-900 {
+            color: #831843; /* */
+        }
+        .hover\:text-pink-900:hover {
+            color: #831843; /* */
+        }
+        .bg-pink-600 {
+            background-color: #db2777; /* */
+        }
+
+        /* Footer styles from artikel1.html */
+        footer {
+            background-color: #db2777; /* */
+            color: white; /* */
+            padding-top: 2rem; /* */
+            padding-bottom: 2rem; /* */
+            margin-top: auto; /* Pushes footer to the bottom */
+            width: 100%;
+        }
+        footer .max-w-7xl {
+            max-width: 7xl; /* */
+            margin-left: auto; /* */
+            margin-right: auto; /* */
+            padding-left: 1.5rem; /* */
+            padding-right: 1.5rem; /* */
+            display: flex; /* */
+            flex-direction: column; /* */
+            justify-content: space-between; /* */
+            align-items: center; /* */
+            gap: 1.5rem; /* */
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            nav ul {
+                display: flex;
+                column-gap: 2rem; /* space-x-8 equivalent */
+            }
+            #mobile-menu {
+                display: none;
+            }
+            footer .max-w-7xl {
+                flex-direction: row; /* */
+            }
+        }
+    </style>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
     <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Manajemen AI Alkindikids</h1>
-        <div style="text-align: right; margin-bottom: 20px;">
-            <span id="loggedInUsername"></span> | <button id="logoutBtn">Logout</button>
+<body class="bg-gradient-to-b from-pink-200 via-yellow-200 to-green-200 min-h-screen flex flex-col">
+    <header class="bg-white bg-opacity-80 backdrop-blur-md shadow-md sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a class="text-3xl font-extrabold text-pink-600 flex items-center gap-2" href="index.html">
+                <img src="image/logo-alkindi.png" alt="Alkindi Logo" class="h-14">
+            </a>
+            <ul class="hidden md:flex space-x-8 text-pink-700 font-semibold">
+                <li>
+                    <a class="hover:text-pink-900 transition" href="index.html">
+                        Beranda
+                    </a>
+                </li>
+                <li>
+                    <a class="hover:text-pink-900 transition" href="tentang-kami.html">
+                        Tentang kami
+                    </a>
+                </li>
+                <li>
+                    <a class="hover:text-pink-900 transition" href="bantuan.html">
+                        Bantuan
+                    </a>
+                </li>
+                <li class="relative group">
+                    <a class="hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-desktop">
+                        Lainnya
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </a>
+                    <div id="dropdown-menu-desktop" class="absolute hidden bg-white shadow-lg rounded-lg py-2 w-48 mt-2 -ml-4 z-10">
+                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
+                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
+                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="md:hidden text-pink-600 focus:outline-none" id="menu-btn">
+                <i class="fas fa-bars fa-2x">
+                </i>
+            </button>
+        </nav>
+        <div class="hidden md:hidden bg-white bg-opacity-90 backdrop-blur-md shadow-inner" id="mobile-menu">
+            <ul class="flex flex-col space-y-4 px-6 py-4 text-pink-700 font-semibold">
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="index.html">
+                        Beranda
+                    </a>
+                </li>
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="tentang-kami.html">
+                        Tentang kami
+                    </a>
+                </li>
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="bantuan.html">
+                        Bantuan
+                    </a>
+                </li>
+                <li class="relative">
+                    <a class="block hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-mobile">
+                        Lainnya
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </a>
+                    <div id="dropdown-menu-mobile" class="hidden bg-white rounded-lg py-2 w-full mt-2 pl-4">
+                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
+                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
+                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
+                    </div>
+                </li>
+            </ul>
         </div>
-        <hr>
-        <div class="admin-action-section" style="margin-bottom: 20px;">
-            <h2>Admin Area</h2>
-            <button onclick="location.href='kelola.html'" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Kelola Admin Pengguna</button>
-        </div>
-        <hr>
+    </header>
 
-        <div class="form-section">
-            <h2>Tambah/Update Buku</h2>
-            <form id="bookForm">
-                <input type="hidden" id="bookId">
-
-                <label for="title">Judul Buku:</label>
-                <input type="text" id="title" required>
-
-                <label for="description">Deskripsi:</label>
-                <textarea id="description" rows="4" required></textarea>
-
-                <label for="orderLink">Link Order:</label>
-                <input type="url" id="orderLink" required>
-
-                <label for="imageUpload">Upload Gambar:</label>
-                <button type="button" id="openCloudinaryWidget">Pilih/Upload Gambar</button>
-                <p id="currentImageLink" style="font-size: 0.9em; margin-top: 5px;"></p>
-                <input type="hidden" id="imageLinkInput" value=""> 
-
-                <button type="submit" id="submitBtn">Tambah Buku</button>
-                <button type="button" id="cancelBtn" style="display: none;">Batal Edit</button>
-            </form>
-        </div>
-
-        <hr>
-
-        <div class="book-list-section">
-            <h2>Daftar Buku</h2>
-            <input type="text" id="searchBookTitle" placeholder="Cari berdasarkan judul..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
-            <div id="bookList" class="book-grid">
-                <p id="loadingMessage">Memuat buku...</p>
+    <main class="flex-grow py-16 px-6">
+        <div class="container" style="max-width: 960px; margin: auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1);">
+            <h1>Manajemen AI Alkindikids</h1>
+            <div style="text-align: right; margin-bottom: 20px;">
+                <span id="loggedInUsername"></span> | <button id="logoutBtn">Logout</button>
             </div>
-            <div class="pagination-controls" style="text-align: center; margin-top: 20px;">
-                <button id="prevPageBtn" style="margin-right: 10px;">Sebelumnya</button>
-                <span id="currentPageInfo">Halaman 1</span>
-                <button id="nextPageBtn" style="margin-left: 10px;">Berikutnya</button>
+            <hr>
+            <div class="admin-action-section" style="margin-bottom: 20px;">
+                <h2>Admin Area</h2>
+                <button onclick="location.href='kelola.html'" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Kelola Admin Pengguna</button>
+            </div>
+            <hr>
+
+            <div class="form-section">
+                <h2>Tambah/Update Buku</h2>
+                <form id="bookForm">
+                    <input type="hidden" id="bookId">
+
+                    <label for="title">Judul Buku:</label>
+                    <input type="text" id="title" required>
+
+                    <label for="description">Deskripsi:</label>
+                    <textarea id="description" rows="4" required></textarea>
+
+                    <label for="orderLink">Link Order:</label>
+                    <input type="url" id="orderLink" required>
+
+                    <label for="imageUpload">Upload Gambar:</label>
+                    <button type="button" id="openCloudinaryWidget">Pilih/Upload Gambar</button>
+                    <p id="currentImageLink" style="font-size: 0.9em; margin-top: 5px;"></p>
+                    <input type="hidden" id="imageLinkInput" value=""> 
+
+                    <button type="submit" id="submitBtn">Tambah Buku</button>
+                    <button type="button" id="cancelBtn" style="display: none;">Batal Edit</button>
+                </form>
+            </div>
+
+            <hr>
+
+            <div class="book-list-section">
+                <h2>Daftar Buku</h2>
+                <input type="text" id="searchBookTitle" placeholder="Cari berdasarkan judul..." style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+                <div id="bookList" class="book-grid">
+                    <p id="loadingMessage">Memuat buku...</p>
+                </div>
+                <div class="pagination-controls" style="text-align: center; margin-top: 20px;">
+                    <button id="prevPageBtn" style="margin-right: 10px;">Sebelumnya</button>
+                    <span id="currentPageInfo">Halaman 1</span>
+                    <button id="nextPageBtn" style="margin-left: 10px;">Berikutnya</button>
+                </div>
             </div>
         </div>
-    </div>
+    </main>
 
+    <footer class="bg-pink-600 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-center md:text-left">
+                ©2025 Alkindi AI. All rights reserved.
+            </p>
+            <div class="flex space-x-6 text-2xl">
+                <a aria-label="WhatsApp" class="hover:text-pink-300 transition" href="https://wa.me/6287871367837">
+                    <i class="fab fa-whatsapp-square">
+                    </i>
+                </a>
+                <a aria-label="Instagram" class="hover:text-pink-300 transition" href="https://www.instagram.com/alkindikids/">
+                    <i class="fab fa-instagram-square">
+                    </i>
+                </a>
+                <a aria-label="YouTube" class="hover:text-pink-300 transition" href="https://www.youtube.com/channel/UCdkSM5ieNzioBzrFKpQe1yQ">
+                    <i class="fab fa-youtube-square">
+                    </i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar mobile and desktop dropdown functionality from artikel1.html
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        const dropdownToggleDesktop = document.getElementById('dropdown-toggle-desktop');
+        const dropdownMenuDesktop = document.getElementById('dropdown-menu-desktop');
+
+        if (dropdownToggleDesktop) {
+            dropdownToggleDesktop.addEventListener('click', () => {
+                dropdownMenuDesktop.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!dropdownToggleDesktop.contains(event.target) && !dropdownMenuDesktop.contains(event.target)) {
+                    dropdownMenuDesktop.classList.add('hidden');
+                }
+            });
+        }
+
+        const dropdownToggleMobile = document.getElementById('dropdown-toggle-mobile');
+        const dropdownMenuMobile = document.getElementById('dropdown-menu-mobile');
+
+        if (dropdownToggleMobile) {
+            dropdownToggleMobile.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent default link behavior
+                dropdownMenuMobile.classList.toggle('hidden');
+            });
+        }
+    </script>
     <script src="script-manage.js"></script> </body>
 </html>
