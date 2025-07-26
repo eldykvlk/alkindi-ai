@@ -81,7 +81,7 @@
     </div>
 
 <script>
-    let firebaseConfig = {}; // Deklarasikan di luar untuk lingkup yang lebih luas
+    let firebaseConfig = {};
 
     async function fetchFirebaseConfig() {
         try {
@@ -98,10 +98,13 @@
     }
 
     function initializeFirebase() {
-        // Inisialisasi Firebase hanya setelah konfigurasi dimuat
+        // PENTING: Pindahkan pengecekan sesi auto-login di sini, setelah Firebase diinisialisasi
+        // dan sebelum event listener untuk form login ditambahkan.
+        checkAutoLogin();
+
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const adminRef = database.ref('admin'); // Path to your admin users
+        const adminRef = database.ref('admin');
 
         const authForm = document.getElementById('authForm');
         const usernameInput = document.getElementById('username');
@@ -110,7 +113,7 @@
 
         authForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            errorMessage.textContent = ''; // Clear previous errors
+            errorMessage.textContent = '';
 
             const username = usernameInput.value;
             const password = passwordInput.value;
@@ -119,12 +122,11 @@
                 const snapshot = await adminRef.orderByChild('username').equalTo(username).once('value');
                 if (snapshot.exists()) {
                     const adminData = snapshot.val();
-                    const userId = Object.keys(adminData)[0]; // Get the user ID
+                    const userId = Object.keys(adminData)[0];
                     const user = adminData[userId];
 
-                    if (user.password === password) { // In a real app, compare hashed passwords
+                    if (user.password === password) {
                         if (user.admin === "acc") {
-                            // Successful login and approved
                             localStorage.setItem('loggedInUser', JSON.stringify({
                                 id: user.id,
                                 username: user.username,
@@ -147,7 +149,29 @@
         });
     }
 
+    // Fungsi baru untuk memeriksa sesi auto-login
+    function checkAutoLogin() {
+        const loggedInUserString = localStorage.getItem('loggedInUser');
+        if (loggedInUserString) {
+            try {
+                const loggedInUser = JSON.parse(loggedInUserString);
+                // Pastikan user memiliki status 'acc'
+                if (loggedInUser && loggedInUser.adminStatus === 'acc') {
+                    // Jika valid, langsung arahkan ke admin.html
+                    window.location.href = 'admin.html';
+                    return true; // Mengindikasikan bahwa auto-login berhasil
+                }
+            } catch (e) {
+                console.error('Error parsing loggedInUser from localStorage', e);
+                // Jika ada error, mungkin data rusak, hapus saja
+                localStorage.removeItem('loggedInUser');
+            }
+        }
+        return false; // Mengindikasikan bahwa tidak ada auto-login yang terjadi
+    }
+
     // Panggil fungsi untuk mengambil konfigurasi saat halaman dimuat
+    // Dan setelah itu, inisialisasi Firebase dan cek auto-login
     document.addEventListener('DOMContentLoaded', fetchFirebaseConfig);
 </script>
 </body>
