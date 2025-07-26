@@ -4,9 +4,52 @@ let CLOUDINARY_CLOUD_NAME = "";
 let CLOUDINARY_UPLOAD_PRESET = "";
 let database;
 let booksRef;
-let adminRef; // Tambahkan ini jika adminRef juga digunakan di sini
+let adminRef;
 
-// Fungsi untuk mengambil konfigurasi
+// --- DOM Elements (deklarasikan di awal untuk akses mudah) ---
+const bookForm = document.getElementById('bookForm');
+const bookIdInput = document.getElementById('bookId');
+const titleInput = document.getElementById('title');
+const descriptionInput = document.getElementById('description');
+const orderLinkInput = document.getElementById('orderLink');
+const openCloudinaryWidgetBtn = document.getElementById('openCloudinaryWidget');
+const currentImageLinkParagraph = document.getElementById('currentImageLink');
+const imageLinkInput = document.getElementById('imageLinkInput');
+const submitBtn = document.getElementById('submitBtn');
+const cancelBtn = document.getElementById('cancelBtn');
+const bookListDiv = document.getElementById('bookList');
+const loadingMessage = document.getElementById('loadingMessage');
+
+const searchBookTitleInput = document.getElementById('searchBookTitle');
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const currentPageInfo = document.getElementById('currentPageInfo');
+
+const loggedInUsernameSpan = document.getElementById('loggedInUsername');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const adminListDiv = document.getElementById('adminList');
+const loadingAdminsMessage = document.getElementById('loadingAdmins');
+const filterAdminStatusSelect = document.getElementById('filterAdminStatus');
+const searchAdminUsernameInput = document.getElementById('searchAdminUsername');
+const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
+const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
+const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
+
+// --- Variabel untuk state ---
+let currentEditingBookId = null;
+let currentImageLink = null;
+let allBooks = [];
+const itemsPerPage = 6;
+let currentPage = 1;
+let filteredBooks = [];
+
+let allAdmins = [];
+const adminItemsPerPage = 5;
+let currentAdminPage = 1;
+let filteredAndSearchedAdmins = [];
+
+// Fungsi untuk mengambil konfigurasi dari Netlify Function
 async function fetchAllConfigs() {
     try {
         const response = await fetch('/.netlify/functions/manage-config'); // Memanggil fungsi baru
@@ -14,7 +57,7 @@ async function fetchAllConfigs() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const config = await response.json();
-        
+
         firebaseConfig = config.firebaseConfig;
         CLOUDINARY_CLOUD_NAME = config.cloudinaryCloudName;
         CLOUDINARY_UPLOAD_PRESET = config.cloudinaryUploadPreset;
@@ -30,85 +73,105 @@ async function fetchAllConfigs() {
 // Fungsi untuk menginisialisasi Firebase dan komponen lain yang bergantung pada konfigurasi
 function initializeAppComponents() {
     // Inisialisasi Firebase
-    firebase.initializeApp(firebaseConfig);
-    database = firebase.database();
-    booksRef = database.ref('books');
-    adminRef = database.ref('admin'); // Inisialisasi adminRef di sini juga
+    if (firebaseConfig.apiKey) { // Pastikan konfigurasi Firebase ada
+        firebase.initializeApp(firebaseConfig);
+        database = firebase.database();
+        booksRef = database.ref('books');
+        adminRef = database.ref('admin'); // Inisialisasi adminRef di sini juga
 
-    // --- Inisialisasi Cloudinary Upload Widget (pindahkan ke sini) ---
-    const uwConfig = {
-        cloudName: CLOUDINARY_CLOUD_NAME,
-        uploadPreset: CLOUDINARY_UPLOAD_PRESET,
-        folder: "alkindibooks",
-    };
-
-    const myWidget = cloudinary.createUploadWidget(uwConfig,
-        (error, result) => {
-            if (!error && result && result.event === "success") {
-                console.log('Upload Berhasil:', result.info);
-                const imageUrl = result.info.secure_url;
-                imageLinkInput.value = imageUrl;
-                currentImageLink = imageUrl;
-                currentImageLinkParagraph.textContent = `Gambar berhasil diupload: ${imageUrl}`;
-                currentImageLinkParagraph.style.display = 'block';
-                submitBtn.disabled = false;
-                alert('Gambar berhasil diupload');
-            } else if (error) {
-                console.error('Upload Error:', error);
-                alert('Gagal mengupload gambar. Silakan coba lagi.');
-                submitBtn.disabled = false;
-            } else if (result && result.event === "abort") {
-                console.log('Upload dibatalkan oleh pengguna.');
-                submitBtn.disabled = false;
-            }
-        }
-    );
-
-    // Event Listener untuk membuka widget (jika elemen ini ada di halaman yang menggunakan script ini)
-    if (openCloudinaryWidgetBtn) {
-        openCloudinaryWidgetBtn.addEventListener('click', () => {
-            myWidget.open();
-            submitBtn.disabled = true;
-        });
+        // Panggil fungsi-fungsi yang bergantung pada inisialisasi Firebase/Cloudinary di sini
+        setupFirebaseListeners();
+    } else {
+        console.error('Firebase config not loaded. Cannot initialize Firebase.');
     }
 
-    // Panggil fungsi-fungsi yang bergantung pada inisialisasi Firebase/Cloudinary di sini
-    setupFirebaseListeners();
-    setupEventListeners();
+    // Inisialisasi Cloudinary Upload Widget (pindahkan ke sini)
+    if (CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET && typeof cloudinary !== 'undefined') {
+        const uwConfig = {
+            cloudName: CLOUDINARY_CLOUD_NAME,
+            uploadPreset: CLOUDINARY_UPLOAD_PRESET,
+            folder: "alkindibooks",
+        };
+
+        const myWidget = cloudinary.createUploadWidget(uwConfig,
+            (error, result) => {
+                if (!error && result && result.event === "success") {
+                    console.log('Upload Berhasil:', result.info);
+                    const imageUrl = result.info.secure_url;
+                    if (imageLinkInput) imageLinkInput.value = imageUrl;
+                    currentImageLink = imageUrl;
+                    if (currentImageLinkParagraph) {
+                        currentImageLinkParagraph.textContent = `Gambar berhasil diupload: ${imageUrl}`;
+                        currentImageLinkParagraph.style.display = 'block';
+                    }
+                    if (submitBtn) submitBtn.disabled = false;
+                    alert('Gambar berhasil diupload');
+                } else if (error) {
+                    console.error('Upload Error:', error);
+                    alert('Gagal mengupload gambar. Silakan coba lagi.');
+                    if (submitBtn) submitBtn.disabled = false;
+                } else if (result && result.event === "abort") {
+                    console.log('Upload dibatalkan oleh pengguna.');
+                    if (submitBtn) submitBtn.disabled = false;
+                }
+            }
+        );
+
+        // Event Listener untuk membuka widget (jika elemen ini ada di halaman yang menggunakan script ini)
+        if (openCloudinaryWidgetBtn) {
+            openCloudinaryWidgetBtn.addEventListener('click', () => {
+                myWidget.open();
+                if (submitBtn) submitBtn.disabled = true;
+            });
+        }
+    } else {
+        console.warn('Cloudinary config or SDK not loaded. Cloudinary widget will not be initialized.');
+    }
+    
+    setupEventListeners(); // Panggil event listeners DOM setelah semua komponen utama siap
 }
 
 // Fungsi untuk menyiapkan listener Firebase (dipisahkan untuk kejelasan)
 function setupFirebaseListeners() {
-    booksRef.on('value', (snapshot) => {
-        const books = snapshot.val();
-        allBooks = [];
-        if (books) {
-            Object.entries(books).forEach(([id, book]) => {
-                allBooks.push({ id, ...book });
-            });
-        }
-        allBooks.sort((a, b) => Number(a.id) - Number(b.id));
-        renderBooks();
-    });
-
-    adminRef.on('value', (snapshot) => {
-        if (loadingAdminsMessage) {
-            loadingAdminsMessage.style.display = 'none';
-        }
-        const admins = snapshot.val();
-        if (admins) {
-            renderAdminList(admins);
-        } else {
-            if (adminListDiv) {
-                adminListDiv.innerHTML = '<p>No admin users registered yet.</p>';
+    if (booksRef) {
+        booksRef.on('value', (snapshot) => {
+            const books = snapshot.val();
+            allBooks = [];
+            if (books) {
+                Object.entries(books).forEach(([id, book]) => {
+                    allBooks.push({ id, ...book });
+                });
             }
-        }
-    }, (error) => {
-        console.error('Error fetching admin data:', error);
-        if (adminListDiv) {
-            adminListDiv.innerHTML = '<p>Error loading admin data.</p>';
-        }
-    });
+            allBooks.sort((a, b) => Number(a.id) - Number(b.id));
+            renderBooks();
+        });
+    }
+
+    if (adminRef) {
+        adminRef.on('value', (snapshot) => {
+            if (loadingAdminsMessage) {
+                loadingAdminsMessage.style.display = 'none';
+            }
+            const admins = snapshot.val();
+            allAdmins = []; // Inisialisasi ulang
+            if (admins) {
+                Object.entries(admins).forEach(([id, admin]) => {
+                    allAdmins.push({ id, ...admin });
+                });
+            }
+            allAdmins.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
+            currentAdminPage = 1; // Reset to first page on data change
+            renderAdminList(); // Render list with updated data
+        }, (error) => {
+            console.error('Error fetching admin data:', error);
+            if (adminListDiv) {
+                adminListDiv.innerHTML = '<p>Terjadi kesalahan saat memuat data admin.</p>';
+            }
+            if (loadingAdminsMessage) {
+                loadingAdminsMessage.style.display = 'none';
+            }
+        });
+    }
 }
 
 // Fungsi untuk menyiapkan semua event listener DOM lainnya
@@ -148,10 +211,10 @@ function setupEventListeners() {
         bookForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const title = titleInput.value;
-            const description = descriptionInput.value;
-            const orderLink = orderLinkInput.value;
-            const imageLink = imageLinkInput.value;
+            const title = titleInput ? titleInput.value : '';
+            const description = descriptionInput ? descriptionInput.value : '';
+            const orderLink = orderLinkInput ? orderLinkInput.value : '';
+            const imageLink = imageLinkInput ? imageLinkInput.value : '';
 
             if (!currentEditingBookId && !imageLink) {
                 alert('Harap upload gambar buku terlebih dahulu menggunakan tombol "Pilih/Upload Gambar"!');
@@ -166,41 +229,45 @@ function setupEventListeners() {
             };
 
             if (currentEditingBookId) {
-                booksRef.child(currentEditingBookId).update(bookData)
-                    .then(() => {
-                        alert('Buku berhasil diupdate!');
-                        resetForm();
-                    })
-                    .catch((error) => {
-                        console.error("Error updating book:", error);
-                        alert("Gagal mengupdate buku: " + error.message);
-                    });
-            } else {
-                booksRef.once('value', (snapshot) => {
-                    const currentBooks = snapshot.val();
-                    let nextId = 1;
-                    if (currentBooks) {
-                        const keys = Object.keys(currentBooks).map(Number).filter(key => !isNaN(key));
-                        if (keys.length > 0) {
-                            nextId = Math.max(...keys) + 1;
-                        }
-                    }
-                    booksRef.child(nextId).set(bookData)
+                if (booksRef) {
+                    booksRef.child(currentEditingBookId).update(bookData)
                         .then(() => {
-                            alert('Buku berhasil ditambahkan!');
+                            alert('Buku berhasil diupdate!');
                             resetForm();
                         })
                         .catch((error) => {
-                            console.error("Error adding book:", error);
-                            alert("Gagal menambahkan buku: " + error.message);
+                            console.error("Error updating book:", error);
+                            alert("Gagal mengupdate buku: " + error.message);
                         });
-                });
+                }
+            } else {
+                if (booksRef) {
+                    booksRef.once('value', (snapshot) => {
+                        const currentBooks = snapshot.val();
+                        let nextId = 1;
+                        if (currentBooks) {
+                            const keys = Object.keys(currentBooks).map(Number).filter(key => !isNaN(key));
+                            if (keys.length > 0) {
+                                nextId = Math.max(...keys) + 1;
+                            }
+                        }
+                        booksRef.child(nextId).set(bookData)
+                            .then(() => {
+                                alert('Buku berhasil ditambahkan!');
+                                resetForm();
+                            })
+                            .catch((error) => {
+                                console.error("Error adding book:", error);
+                                alert("Gagal menambahkan buku: " + error.message);
+                            });
+                    });
+                }
             }
         });
     }
 
     // Event Listener untuk Mengisi Form Saat Edit
-    if (bookListDiv) {
+    if (bookListDiv && booksRef) {
         bookListDiv.addEventListener('click', (e) => {
             if (e.target.classList.contains('edit-btn')) {
                 const id = e.target.dataset.id;
@@ -208,23 +275,25 @@ function setupEventListeners() {
                     const book = snapshot.val();
                     if (book) {
                         currentEditingBookId = id;
-                        titleInput.value = book.title;
-                        descriptionInput.value = book.description;
-                        orderLinkInput.value = book.orderLink;
+                        if (titleInput) titleInput.value = book.title;
+                        if (descriptionInput) descriptionInput.value = book.description;
+                        if (orderLinkInput) orderLinkInput.value = book.orderLink;
                         currentImageLink = book.imageLink;
-                        imageLinkInput.value = book.imageLink;
+                        if (imageLinkInput) imageLinkInput.value = book.imageLink;
 
-                        if (currentImageLink) {
-                            currentImageLinkParagraph.textContent = `Gambar saat ini: ${currentImageLink}`;
-                            currentImageLinkParagraph.style.display = 'block';
-                        } else {
-                            currentImageLinkParagraph.textContent = '';
-                            currentImageLinkParagraph.style.display = 'none';
+                        if (currentImageLinkParagraph) {
+                            if (currentImageLink) {
+                                currentImageLinkParagraph.textContent = `Gambar saat ini: ${currentImageLink}`;
+                                currentImageLinkParagraph.style.display = 'block';
+                            } else {
+                                currentImageLinkParagraph.textContent = '';
+                                currentImageLinkParagraph.style.display = 'none';
+                            }
                         }
 
-                        submitBtn.textContent = 'Update Buku';
-                        cancelBtn.style.display = 'inline-block';
-                        bookForm.scrollIntoView({ behavior: 'smooth' });
+                        if (submitBtn) submitBtn.textContent = 'Update Buku';
+                        if (cancelBtn) cancelBtn.style.display = 'inline-block';
+                        if (bookForm) bookForm.scrollIntoView({ behavior: 'smooth' });
                     }
                 });
             }
@@ -232,7 +301,7 @@ function setupEventListeners() {
     }
 
     // Event Listener untuk Menghapus Buku
-    if (bookListDiv) {
+    if (bookListDiv && booksRef) {
         bookListDiv.addEventListener('click', async (e) => {
             if (e.target.classList.contains('delete-btn')) {
                 const id = e.target.dataset.id;
@@ -292,40 +361,7 @@ function setupEventListeners() {
 }
 
 
-// --- DOM Elements (seperti sebelumnya, tapi pastikan variabel sudah dideklarasikan) ---
-// Elemen-elemen DOM
-const bookForm = document.getElementById('bookForm');
-const bookIdInput = document.getElementById('bookId');
-const titleInput = document.getElementById('title');
-const descriptionInput = document.getElementById('description');
-const orderLinkInput = document.getElementById('orderLink');
-const openCloudinaryWidgetBtn = document.getElementById('openCloudinaryWidget');
-const currentImageLinkParagraph = document.getElementById('currentImageLink');
-const imageLinkInput = document.getElementById('imageLinkInput');
-const submitBtn = document.getElementById('submitBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-const bookListDiv = document.getElementById('bookList');
-const loadingMessage = document.getElementById('loadingMessage');
-
-// Elemen-elemen DOM baru untuk search dan pagination buku
-const searchBookTitleInput = document.getElementById('searchBookTitle');
-const prevPageBtn = document.getElementById('prevPageBtn');
-const nextPageBtn = document.getElementById('nextPageBtn');
-const currentPageInfo = document.getElementById('currentPageInfo');
-
-let currentEditingBookId = null;
-let currentImageLink = null;
-
-// --- Variabel untuk Paginasi dan Pencarian Buku ---
-let allBooks = [];
-const itemsPerPage = 6;
-let currentPage = 1;
-let filteredBooks = [];
-
 // --- Session Check and Logout ---
-const loggedInUsernameSpan = document.getElementById('loggedInUsername');
-const logoutBtn = document.getElementById('logoutBtn');
-
 const checkLogin = () => {
     const loggedInUser = localStorage.getItem('loggedInUser');
     if (!loggedInUser) {
@@ -333,29 +369,18 @@ const checkLogin = () => {
         return null;
     }
     const user = JSON.parse(loggedInUser);
+    // Asumsi halaman ini hanya untuk admin 'acc'
     if (user.adminStatus !== 'acc') {
+        alert('Anda tidak memiliki akses untuk melihat halaman ini. Silakan login sebagai admin yang disetujui.');
         window.location.href = 'login.html';
         return null;
     }
-    if (loggedInUsernameSpan) { // Pastikan elemen ada sebelum diisi
+    if (loggedInUsernameSpan) {
         loggedInUsernameSpan.textContent = `Welcome, ${user.username}`;
     }
     return user;
 };
 
-// Elemen-elemen DOM untuk Admin Management (dari kelola.html, jika script-manage.js juga digunakan di sana)
-const adminListDiv = document.getElementById('adminList');
-const loadingAdminsMessage = document.getElementById('loadingAdmins');
-const filterAdminStatusSelect = document.getElementById('filterAdminStatus');
-const searchAdminUsernameInput = document.getElementById('searchAdminUsername');
-const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
-const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
-const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
-
-let allAdmins = [];
-const adminItemsPerPage = 5;
-let currentAdminPage = 1;
-let filteredAndSearchedAdmins = [];
 
 // --- Fungsi untuk Memuat, Filter, dan Menampilkan Buku (READ, SEARCH, PAGINATION) ---
 const renderBooks = () => {
@@ -364,7 +389,7 @@ const renderBooks = () => {
     bookListDiv.innerHTML = '';
     loadingMessage.style.display = 'none';
 
-    const searchTerm = searchBookTitleInput.value.toLowerCase();
+    const searchTerm = searchBookTitleInput ? searchBookTitleInput.value.toLowerCase() : '';
     filteredBooks = allBooks.filter(book =>
         book.title && book.title.toLowerCase().includes(searchTerm)
     );
@@ -379,7 +404,7 @@ const renderBooks = () => {
 
     if (currentPageInfo) currentPageInfo.textContent = `Halaman ${currentPage} dari ${totalPages > 0 ? totalPages : 1}`;
     if (prevPageBtn) prevPageBtn.disabled = currentPage === 1;
-    if (nextPageBtn) nextP`ageBtn.disabled = currentPage === totalPages || totalPages === 0;
+    if (nextPageBtn) nextPageBtn.disabled = currentPage === totalPages || totalPages === 0;
 
     if (booksToDisplay.length > 0) {
         booksToDisplay.forEach(book => {
@@ -387,6 +412,7 @@ const renderBooks = () => {
             bookItem.classList.add('book-item');
             bookItem.dataset.id = book.id;
 
+            // Perbaikan pada template literal
             bookItem.innerHTML = `
                 <img src="${book.imageLink || 'https://via.placeholder.com/200x200?text=No+Image'}" alt="${book.title}">
                 <h3>${book.title}</h3>
@@ -424,8 +450,8 @@ function resetForm() {
 
 // --- Admin Management Section (Jika script-manage.js juga digunakan untuk mengelola admin) ---
 const renderAdminList = () => {
-    if (!adminListDiv || !loadingAdminsMessage) {
-        console.error('Admin list elements not found. Skipping admin list rendering.');
+    if (!adminListDiv || !loadingAdminsMessage || !filterAdminStatusSelect || !searchAdminUsernameInput || !prevAdminPageBtn || !nextAdminPageBtn || !currentAdminPageInfo) {
+        console.warn('Admin list related DOM elements not fully found. Skipping admin list rendering.');
         return;
     }
 
@@ -436,7 +462,8 @@ const renderAdminList = () => {
     const searchTerm = searchAdminUsernameInput.value.toLowerCase();
 
     filteredAndSearchedAdmins = allAdmins.filter(admin => {
-        const currentUser = checkLogin(); // Pastikan currentUser diakses di sini
+        const currentUser = checkLogin();
+        // Jangan tampilkan diri sendiri di daftar admin yang dikelola
         if (currentUser && admin.id === currentUser.id) {
             return false;
         }
@@ -455,9 +482,9 @@ const renderAdminList = () => {
     const endAdminIndex = startAdminIndex + adminItemsPerPage;
     const adminsToDisplay = filteredAndSearchedAdmins.slice(startAdminIndex, endAdminIndex);
 
-    if (currentAdminPageInfo) currentAdminPageInfo.textContent = `Halaman ${currentAdminPage} dari ${totalAdminPages > 0 ? totalAdminPages : 1}`;
-    if (prevAdminPageBtn) prevAdminPageBtn.disabled = currentAdminPage === 1;
-    if (nextAdminPageBtn) nextAdminPageBtn.disabled = currentAdminPage === totalAdminPages || totalAdminPages === 0;
+    currentAdminPageInfo.textContent = `Halaman ${currentAdminPage} dari ${totalAdminPages > 0 ? totalAdminPages : 1}`;
+    prevAdminPageBtn.disabled = currentAdminPage === 1;
+    nextAdminPageBtn.disabled = currentAdminPage === totalAdminPages || totalAdminPages === 0;
 
     if (adminsToDisplay.length === 0) {
         adminListDiv.innerHTML = '<p>Tidak ada pengguna admin yang ditemukan dengan kriteria ini.</p>';
@@ -495,18 +522,21 @@ const renderAdminList = () => {
         adminTableBody.appendChild(row);
     });
 
+    // Menambahkan event listener setelah tombol dibuat
     document.querySelectorAll('.toggle-admin-status-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
             const adminIdToUpdate = e.target.dataset.id;
             const currentStatus = e.target.dataset.status;
             const newStatus = currentStatus === 'acc' ? 'not' : 'acc';
 
-            try {
-                await adminRef.child(adminIdToUpdate).update({ admin: newStatus });
-                alert(`Status admin untuk ${e.target.parentNode.previousElementSibling.previousElementSibling.textContent} diperbarui menjadi "${newStatus}".`);
-            } catch (error) {
-                console.error('Error updating admin status:', error);
-                alert('Gagal memperbarui status admin.');
+            if (adminRef) {
+                try {
+                    await adminRef.child(adminIdToUpdate).update({ admin: newStatus });
+                    alert(`Status admin untuk ${e.target.parentNode.previousElementSibling.previousElementSibling.textContent} diperbarui menjadi "${newStatus}".`);
+                } catch (error) {
+                    console.error('Error updating admin status:', error);
+                    alert('Gagal memperbarui status admin.');
+                }
             }
         });
     });
@@ -517,12 +547,14 @@ const renderAdminList = () => {
             const adminUsername = e.target.parentNode.previousElementSibling.previousElementSibling.textContent;
 
             if (confirm(`Apakah Anda yakin ingin menghapus admin "${adminUsername}"? Tindakan ini tidak dapat dibatalkan.`)) {
-                try {
-                    await adminRef.child(adminIdToDelete).remove();
-                    alert(`Admin "${adminUsername}" berhasil dihapus!`);
-                } catch (error) {
-                    console.error('Error deleting admin:', error);
-                    alert('Gagal menghapus admin. Silakan coba lagi.');
+                if (adminRef) {
+                    try {
+                        await adminRef.child(adminIdToDelete).remove();
+                        alert(`Admin "${adminUsername}" berhasil dihapus!`);
+                    } catch (error) {
+                        console.error('Error deleting admin:', error);
+                        alert('Gagal menghapus admin. Silakan coba lagi.');
+                    }
                 }
             }
         });
