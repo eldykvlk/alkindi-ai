@@ -1,4 +1,4 @@
-// Deklarasikan variabel di lingkup atas agar dapat diakses oleh semua fungsi
+
 let firebaseConfig = {};
 let CLOUDINARY_CLOUD_NAME = "";
 let CLOUDINARY_UPLOAD_PRESET = "";
@@ -6,7 +6,7 @@ let database;
 let booksRef;
 let adminRef;
 
-// --- DOM Elements (deklarasikan di awal untuk akses mudah) ---
+
 const bookForm = document.getElementById('bookForm');
 const bookIdInput = document.getElementById('bookId');
 const titleInput = document.getElementById('title');
@@ -36,7 +36,7 @@ const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
 const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
 const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
 
-// --- Variabel untuk state ---
+
 let currentEditingBookId = null;
 let currentImageLink = null;
 let allBooks = [];
@@ -49,10 +49,10 @@ const adminItemsPerPage = 5;
 let currentAdminPage = 1;
 let filteredAndSearchedAdmins = [];
 
-// Fungsi untuk mengambil konfigurasi dari Netlify Function
+
 async function fetchAllConfigs() {
     try {
-        const response = await fetch('/.netlify/functions/manage-config'); // Memanggil fungsi baru
+        const response = await fetch('/.netlify/functions/manage-config');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -62,30 +62,29 @@ async function fetchAllConfigs() {
         CLOUDINARY_CLOUD_NAME = config.cloudinaryCloudName;
         CLOUDINARY_UPLOAD_PRESET = config.cloudinaryUploadPreset;
 
-        initializeAppComponents(); // Panggil fungsi inisialisasi setelah semua config dimuat
+        initializeAppComponents(); 
     } catch (error) {
         console.error('Error fetching configurations:', error);
         alert('Gagal memuat konfigurasi aplikasi. Silakan coba lagi.');
-        // Anda mungkin ingin menonaktifkan fungsionalitas atau menampilkan pesan kesalahan yang lebih jelas
+        
     }
 }
 
-// Fungsi untuk menginisialisasi Firebase dan komponen lain yang bergantung pada konfigurasi
+
 function initializeAppComponents() {
-    // Inisialisasi Firebase
-    if (firebaseConfig.apiKey) { // Pastikan konfigurasi Firebase ada
+  
+    if (firebaseConfig.apiKey) { 
         firebase.initializeApp(firebaseConfig);
         database = firebase.database();
         booksRef = database.ref('books');
-        adminRef = database.ref('admin'); // Inisialisasi adminRef di sini juga
-
-        // Panggil fungsi-fungsi yang bergantung pada inisialisasi Firebase/Cloudinary di sini
+        adminRef = database.ref('admin');
+       
         setupFirebaseListeners();
     } else {
         console.error('Firebase config not loaded. Cannot initialize Firebase.');
     }
 
-    // Inisialisasi Cloudinary Upload Widget (pindahkan ke sini)
+    
     if (CLOUDINARY_CLOUD_NAME && CLOUDINARY_UPLOAD_PRESET && typeof cloudinary !== 'undefined') {
         const uwConfig = {
             cloudName: CLOUDINARY_CLOUD_NAME,
@@ -117,7 +116,7 @@ function initializeAppComponents() {
             }
         );
 
-        // Event Listener untuk membuka widget (jika elemen ini ada di halaman yang menggunakan script ini)
+        
         if (openCloudinaryWidgetBtn) {
             openCloudinaryWidgetBtn.addEventListener('click', () => {
                 myWidget.open();
@@ -128,10 +127,10 @@ function initializeAppComponents() {
         console.warn('Cloudinary config or SDK not loaded. Cloudinary widget will not be initialized.');
     }
     
-    setupEventListeners(); // Panggil event listeners DOM setelah semua komponen utama siap
+    setupEventListeners();
 }
 
-// Fungsi untuk menyiapkan listener Firebase (dipisahkan untuk kejelasan)
+
 function setupFirebaseListeners() {
     if (booksRef) {
         booksRef.on('value', (snapshot) => {
@@ -153,15 +152,15 @@ function setupFirebaseListeners() {
                 loadingAdminsMessage.style.display = 'none';
             }
             const admins = snapshot.val();
-            allAdmins = []; // Inisialisasi ulang
+            allAdmins = []; 
             if (admins) {
                 Object.entries(admins).forEach(([id, admin]) => {
                     allAdmins.push({ id, ...admin });
                 });
             }
             allAdmins.sort((a, b) => (a.username || '').localeCompare(b.username || ''));
-            currentAdminPage = 1; // Reset to first page on data change
-            renderAdminList(); // Render list with updated data
+            currentAdminPage = 1; 
+            renderAdminList(); 
         }, (error) => {
             console.error('Error fetching admin data:', error);
             if (adminListDiv) {
@@ -174,9 +173,9 @@ function setupFirebaseListeners() {
     }
 }
 
-// Fungsi untuk menyiapkan semua event listener DOM lainnya
+
 function setupEventListeners() {
-    // Session Check and Logout
+ 
     const currentUser = checkLogin();
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
@@ -185,7 +184,7 @@ function setupEventListeners() {
         });
     }
 
-    // Event Listeners untuk Paginasi & Pencarian Buku
+   
     if (prevPageBtn) prevPageBtn.addEventListener('click', () => {
         if (currentPage > 1) {
             currentPage--;
@@ -206,7 +205,6 @@ function setupEventListeners() {
         renderBooks();
     });
 
-    // Event Listeners untuk Menambah/Mengupdate Buku
     if (bookForm) {
         bookForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -300,7 +298,7 @@ function setupEventListeners() {
         });
     }
 
-    // Event Listener untuk Menghapus Buku
+    
     if (bookListDiv && booksRef) {
         bookListDiv.addEventListener('click', async (e) => {
             if (e.target.classList.contains('delete-btn')) {
@@ -322,10 +320,10 @@ function setupEventListeners() {
         });
     }
 
-    // Fungsi Reset Form
+  
     if (cancelBtn) cancelBtn.addEventListener('click', resetForm);
 
-    // Event Listeners untuk Filter, Pencarian, dan Paginasi Admin
+   
     if (filterAdminStatusSelect) {
         filterAdminStatusSelect.addEventListener('change', () => {
             currentAdminPage = 1;
@@ -361,7 +359,6 @@ function setupEventListeners() {
 }
 
 
-// --- Session Check and Logout ---
 const checkLogin = () => {
     const loggedInUser = localStorage.getItem('loggedInUser');
     if (!loggedInUser) {
@@ -369,7 +366,7 @@ const checkLogin = () => {
         return null;
     }
     const user = JSON.parse(loggedInUser);
-    // Asumsi halaman ini hanya untuk admin 'acc'
+
     if (user.adminStatus !== 'acc') {
         alert('Anda tidak memiliki akses untuk melihat halaman ini. Silakan login sebagai admin yang disetujui.');
         window.location.href = 'login.html';
@@ -382,9 +379,9 @@ const checkLogin = () => {
 };
 
 
-// --- Fungsi untuk Memuat, Filter, dan Menampilkan Buku (READ, SEARCH, PAGINATION) ---
+
 const renderBooks = () => {
-    if (!bookListDiv || !loadingMessage) return; // Exit if elements not found
+    if (!bookListDiv || !loadingMessage) return; 
 
     bookListDiv.innerHTML = '';
     loadingMessage.style.display = 'none';
@@ -412,7 +409,7 @@ const renderBooks = () => {
             bookItem.classList.add('book-item');
             bookItem.dataset.id = book.id;
 
-            // Perbaikan pada template literal
+     
             bookItem.innerHTML = `
                 <img src="${book.imageLink || 'https://via.placeholder.com/200x200?text=No+Image'}" alt="${book.title}">
                 <h3>${book.title}</h3>
@@ -429,7 +426,7 @@ const renderBooks = () => {
     }
 };
 
-// --- Fungsi Reset Form ---
+
 function resetForm() {
     if (bookForm) bookForm.reset();
     if (bookIdInput) bookIdInput.value = '';
@@ -448,7 +445,7 @@ function resetForm() {
     if (submitBtn) submitBtn.disabled = false;
 }
 
-// --- Admin Management Section (Jika script-manage.js juga digunakan untuk mengelola admin) ---
+
 const renderAdminList = () => {
     if (!adminListDiv || !loadingAdminsMessage || !filterAdminStatusSelect || !searchAdminUsernameInput || !prevAdminPageBtn || !nextAdminPageBtn || !currentAdminPageInfo) {
         console.warn('Admin list related DOM elements not fully found. Skipping admin list rendering.');
@@ -463,7 +460,7 @@ const renderAdminList = () => {
 
     filteredAndSearchedAdmins = allAdmins.filter(admin => {
         const currentUser = checkLogin();
-        // Jangan tampilkan diri sendiri di daftar admin yang dikelola
+
         if (currentUser && admin.id === currentUser.id) {
             return false;
         }
@@ -522,7 +519,6 @@ const renderAdminList = () => {
         adminTableBody.appendChild(row);
     });
 
-    // Menambahkan event listener setelah tombol dibuat
     document.querySelectorAll('.toggle-admin-status-btn').forEach(button => {
         button.addEventListener('click', async (e) => {
             const adminIdToUpdate = e.target.dataset.id;
@@ -562,5 +558,4 @@ const renderAdminList = () => {
 };
 
 
-// Panggil fungsi untuk mengambil konfigurasi saat script dimuat
 fetchAllConfigs();
