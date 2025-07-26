@@ -51,8 +51,8 @@ textarea {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    width: calc(100% - 22px); /* Adjust for padding and border */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    width: calc(100% - 22px); 
+    box-sizing: border-box;
 }
 
 button[type="submit"],
@@ -92,7 +92,7 @@ button[type="button"]:hover {
     padding: 15px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Distribute space between title, desc, and actions */
+    justify-content: space-between; 
     align-items: center;
     background-color: #fff;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -117,7 +117,7 @@ button[type="button"]:hover {
     font-size: 0.9em;
     color: #666;
     margin-bottom: 10px;
-    flex-grow: 1; /* Allows description to take available space */
+    flex-grow: 1; 
     text-align: center;
 }
 
@@ -132,8 +132,8 @@ button[type="button"]:hover {
 .book-item .actions button {
     padding: 8px 12px;
     font-size: 0.9em;
-    width: 48%; /* Adjust width for buttons */
-    box-sizing: border-box; /* Ensure padding and border are included in width */
+    width: 48%; 
+    box-sizing: border-box; 
 }
 
 .book-item .actions .edit-btn {

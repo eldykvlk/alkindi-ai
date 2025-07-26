@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Alkindi - Rekomendasi Buku Islami</title>
 
-    <!-- Tailwind CSS CDN -->
+    
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Font & Icons -->
+   
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
 
@@ -32,7 +32,7 @@
       .beli-btn {
   display: inline-block;
   margin-top: 20px;
-  background: linear-gradient(to right, #f093fb, #f5576c); /* Pink ke merah */
+  background: linear-gradient(to right, #f093fb, #f5576c); 
   color: white;
   padding: 12px 25px;
   font-size: 1.2em;
@@ -46,14 +46,14 @@
 .beli-btn:hover {
   transform: translateY(-2px);
   box-shadow: 0 12px 20px rgba(0, 0, 0, 0.25);
-  background: linear-gradient(to right, #ff758c, #ff7eb3); /* Hover gradient */
+  background: linear-gradient(to right, #ff758c, #ff7eb3); 
 }
     </style>
   </head>
 
   <body class="bg-gradient-to-b from-pink-200 via-yellow-200 to-green-200 min-h-screen flex flex-col">
 
-    <!-- Navbar -->
+
     <header class="bg-white bg-opacity-80 backdrop-blur-md shadow-md sticky top-0 z-50">
       <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         <a href="#" class="text-3xl font-extrabold text-pink-600 flex items-center gap-2">
@@ -99,7 +99,7 @@
       </div>
     </header>
 
-    <!-- Main Form -->
+ 
     <main class="flex-grow">
       <section class="max-w-2xl mx-auto bg-white bg-opacity-90 backdrop-blur-md mt-12 p-10 rounded-3xl shadow-lg text-center border-4 border-pink-300">
         <h1 class="text-3xl md:text-4xl font-extrabold text-pink-600 mb-4">📖 Alkindi - Asisten Rekomendasi Islami</h1>
@@ -118,7 +118,7 @@
       </section>
     </main>
 
-    <!-- Footer -->
+    
     <footer class="bg-pink-600 text-white py-8 mt-20">
       <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
         <p class="text-center md:text-left"> ©2025 Alkindi AI. All rights reserved.</p>
@@ -132,7 +132,7 @@
 
   <script src="script.js"></script>
   <script>
-    // Mobile menu toggle (existing code)
+    
     const menuBtn = document.getElementById('menu-btn');
     const mobileMenu = document.getElementById('mobile-menu');
   
@@ -140,7 +140,7 @@
       mobileMenu.classList.toggle('hidden');
     });
   
-    // Desktop dropdown toggle
+   
     const dropdownToggleDesktop = document.getElementById('dropdown-toggle-desktop');
     const dropdownMenuDesktop = document.getElementById('dropdown-menu-desktop');
   
@@ -149,7 +149,7 @@
         dropdownMenuDesktop.classList.toggle('hidden');
       });
   
-      // Close desktop dropdown when clicking outside
+     
       document.addEventListener('click', (event) => {
         if (!dropdownToggleDesktop.contains(event.target) && !dropdownMenuDesktop.contains(event.target)) {
           dropdownMenuDesktop.classList.add('hidden');
@@ -157,13 +157,13 @@
       });
     }
   
-    // Mobile dropdown toggle
+ 
     const dropdownToggleMobile = document.getElementById('dropdown-toggle-mobile');
     const dropdownMenuMobile = document.getElementById('dropdown-menu-mobile');
   
     if (dropdownToggleMobile) {
       dropdownToggleMobile.addEventListener('click', (event) => {
-        event.preventDefault(); // Prevent default link behavior
+        event.preventDefault(); 
         dropdownMenuMobile.classList.toggle('hidden');
       });
     }

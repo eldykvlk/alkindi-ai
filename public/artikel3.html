@@ -159,7 +159,7 @@
       mobileMenu.classList.toggle('hidden');
     });
 
-  // Desktop dropdown toggle
+ 
   const dropdownToggleDesktop = document.getElementById('dropdown-toggle-desktop');
   const dropdownMenuDesktop = document.getElementById('dropdown-menu-desktop');
 
@@ -168,7 +168,7 @@
       dropdownMenuDesktop.classList.toggle('hidden');
     });
 
-    // Close desktop dropdown when clicking outside
+   
     document.addEventListener('click', (event) => {
       if (!dropdownToggleDesktop.contains(event.target) && !dropdownMenuDesktop.contains(event.target)) {
         dropdownMenuDesktop.classList.add('hidden');
@@ -176,18 +176,18 @@
     });
   }
 
-  // Mobile dropdown toggle
+ 
   const dropdownToggleMobile = document.getElementById('dropdown-toggle-mobile');
   const dropdownMenuMobile = document.getElementById('dropdown-menu-mobile');
 
   if (dropdownToggleMobile) {
     dropdownToggleMobile.addEventListener('click', (event) => {
-      event.preventDefault(); // Prevent default link behavior
+      event.preventDefault(); 
       dropdownMenuMobile.classList.toggle('hidden');
     });
   }
 
-  // No contact form on this page, so contact form script is removed or not needed.
+
   </script>
  </body>
 </html>

@@ -9,7 +9,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="kelola.css">
     <style>
-        /* Body background from artikel1.html */
+
         body {
             font-family: 'Comic Neue', cursive, sans-serif;
             min-height: 100vh;
@@ -19,7 +19,7 @@
             margin: 0;
         }
 
-        /* Navbar styles from artikel1.html */
+
         header {
             background-color: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(8px);
@@ -69,13 +69,13 @@
             background-color: #db2777;
         }
 
-        /* Footer styles from artikel1.html */
+     
         footer {
             background-color: #db2777;
             color: white;
             padding-top: 2rem;
             padding-bottom: 2rem;
-            margin-top: auto; /* Pushes footer to the bottom */
+            margin-top: auto; 
             width: 100%;
         }
         footer .max-w-7xl {
@@ -90,7 +90,7 @@
             align-items: center;
             gap: 1.5rem;
         }
-        @media (min-width: 768px) { /* md breakpoint */
+        @media (min-width: 768px) { 
             nav ul {
                 display: flex;
                 column-gap: 2rem;
@@ -241,7 +241,6 @@
     </footer>
 
     <script>
-        // Navbar mobile and desktop dropdown functionality from artikel1.html
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -276,7 +275,7 @@
             });
         }
  
-           let firebaseConfig = {}; // Deklarasikan di luar untuk lingkup yang lebih luas
+           let firebaseConfig = {};  
     
         async function fetchFirebaseConfig() {
             try {
@@ -288,21 +287,20 @@
                 initializeFirebase();
             } catch (error) {
                 console.error('Error fetching Firebase config:', error);
-                // Anda mungkin ingin menambahkan elemen pesan kesalahan di kelola.html jika belum ada
-                // Misalnya: document.getElementById('generalErrorMessage').textContent = 'Gagal memuat konfigurasi. Silakan coba lagi.';
+              
             }
         }
     
-        let database; // Deklarasikan database dan adminRef di lingkup yang lebih luas
+        let database; 
         let adminRef;
     
         function initializeFirebase() {
-            // Inisialisasi Firebase hanya setelah konfigurasi dimuat
+           
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
-            adminRef = database.ref('admin'); // Path to your admin users
+            adminRef = database.ref('admin'); 
     
-            // Panggil fungsi untuk memuat data admin setelah Firebase diinisialisasi
+            
             loadAdminsAndSetupListeners();
         }
     
@@ -311,20 +309,20 @@
             const adminListDiv = document.getElementById('adminList');
             const loadingAdminsMessage = document.getElementById('loadingAdmins');
     
-            // Elemen-elemen DOM untuk filter, pencarian, dan paginasi admin
+        
             const filterAdminStatusSelect = document.getElementById('filterAdminStatus');
             const searchAdminUsernameInput = document.getElementById('searchAdminUsername');
             const prevAdminPageBtn = document.getElementById('prevAdminPageBtn');
             const nextAdminPageBtn = document.getElementById('nextAdminPageBtn');
             const currentAdminPageInfo = document.getElementById('currentAdminPageInfo');
     
-            // --- Variabel untuk Paginasi, Pencarian, dan Filter Admin ---
+           
             let allAdmins = [];
             const adminItemsPerPage = 5;
             let currentAdminPage = 1;
             let filteredAndSearchedAdmins = [];
     
-            // --- Session Check and Redirect (diulang di sini untuk keamanan) ---
+          
             const checkLogin = () => {
                 const loggedInUser = localStorage.getItem('loggedInUser');
                 if (!loggedInUser) {
@@ -342,15 +340,15 @@
             };
     
             const currentUser = checkLogin();
-            // Tidak perlu ada `if (!currentUser)` di sini karena redirect sudah dilakukan di `checkLogin`.
+     
     
-            // --- Logout Functionality ---
+           
             logoutBtn.addEventListener('click', () => {
                 localStorage.removeItem('loggedInUser');
                 window.location.href = 'login.html';
             });
     
-            // --- Admin Management Section (Diperbarui dengan Filter, Pencarian & Paginasi) ---
+           
             const renderAdminList = () => {
                 adminListDiv.innerHTML = '';
                 loadingAdminsMessage.style.display = 'none';
@@ -459,9 +457,8 @@
                 });
             };
     
-            // Fungsi untuk memuat admin dan menyiapkan listener
+         
             const loadAdminsAndSetupListeners = () => {
-                 // Listen for changes in the 'admin' node (FETCH ALL ADMINS ONCE)
                 adminRef.on('value', (snapshot) => {
                     loadingAdminsMessage.style.display = 'none';
                     const admins = snapshot.val();
@@ -481,7 +478,7 @@
                     loadingAdminsMessage.style.display = 'none';
                 });
     
-                // --- Event Listeners untuk Filter, Pencarian, dan Paginasi Admin ---
+              
                 filterAdminStatusSelect.addEventListener('change', () => {
                     currentAdminPage = 1;
                     renderAdminList();
@@ -508,7 +505,6 @@
                 });
             };
     
-            // Panggil fungsi untuk mengambil konfigurasi saat halaman dimuat
             document.addEventListener('DOMContentLoaded', fetchFirebaseConfig);
         </script>
 </body>

@@ -11,11 +11,11 @@
         body {
             font-family: 'Comic Neue', cursive, sans-serif;
             display: flex;
-            flex-direction: column; /* Added to allow footer to stick to bottom */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); /* Gradient from artikel1.html */
+            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); 
             margin: 0;
         }
         .container-register {
@@ -23,10 +23,10 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 350px; /* Keep the original width */
+            width: 350px; 
             text-align: center;
-            z-index: 1; /* Ensure container is above background */
-            margin: auto; /* Center the container vertically and horizontally */
+            z-index: 1; 
+            margin: auto; 
         }
         h1 {
             color: #333;
@@ -43,7 +43,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #ec4899; /* Pink color from artikel1.html */
+            background-color: #ec4899; 
             color: white;
             border: none;
             border-radius: 4px;
@@ -52,7 +52,7 @@
             margin-top: 10px;
         }
         button:hover {
-            background-color: #db2777; /* Darker pink on hover */
+            background-color: #db2777; 
         }
         .message {
             margin-top: 15px;
@@ -64,11 +64,11 @@
             font-size: 0.9em;
         }
         .switch-form a {
-            color: #db2777; /* Pink color for links */
+            color: #db2777;
             cursor: pointer;
             text-decoration: none;
         }
-        /* Navbar and Footer styles from artikel1.html */
+       
         header {
             background-color: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(8px);
@@ -127,7 +127,7 @@
             color: white;
             padding-top: 2rem;
             padding-bottom: 2rem;
-            margin-top: auto; /* Pushes footer to the bottom */
+            margin-top: auto;
             width: 100%;
         }
         footer .max-w-7xl {
@@ -142,7 +142,7 @@
             align-items: center;
             gap: 1.5rem;
         }
-        @media (min-width: 768px) { /* md breakpoint */
+        @media (min-width: 768px) { 
             nav ul {
                 display: flex;
                 space-x: 2rem;
@@ -265,7 +265,7 @@
     </footer>
 
     <script>
-        // Navbar mobile and desktop dropdown functionality
+     
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -300,7 +300,7 @@
             });
         }
 
-        // Firebase register script (original script from register.html)
+        
         let firebaseConfig = {};
 
         async function fetchFirebaseConfig() {

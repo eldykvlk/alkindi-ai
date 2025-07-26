@@ -8,37 +8,37 @@
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&amp;display=swap" rel="stylesheet"/>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <link rel="stylesheet" href="admin.css"> <style>
-        /* Body background from artikel1.html */
+        
         body {
             font-family: 'Comic Neue', cursive, sans-serif;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); /* */
+            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); 
             margin: 0;
         }
 
-        /* Navbar styles from artikel1.html */
+         
         header {
-            background-color: rgba(255, 255, 255, 0.8); /* */
-            backdrop-filter: blur(8px); /* */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* */
-            position: sticky; /* */
-            top: 0; /* */
-            z-index: 50; /* */
-            width: 100%; /* */
+            background-color: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+            position: sticky; 
+            top: 0; 
+            z-index: 50; 
+            width: 100%; 
         }
         nav {
-            max-width: 7xl; /* */
-            margin-left: auto; /* */
-            margin-right: auto; /* */
-            padding-left: 1.5rem; /* */
-            padding-right: 1.5rem; /* */
-            padding-top: 1rem; /* */
-            padding-bottom: 1rem; /* */
-            display: flex; /* */
-            align-items: center; /* */
-            justify-content: space-between; /* */
+            max-width: 7xl; 
+            margin-left: auto; 
+            margin-right: auto; 
+            padding-left: 1.5rem; 
+            padding-right: 1.5rem; 
+            padding-top: 1rem; 
+            padding-bottom: 1rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
         }
         nav a {
             text-decoration: none;
@@ -53,52 +53,52 @@
             display: block;
         }
         .text-pink-600 {
-            color: #db2777; /* */
+            color: #db2777; 
         }
         .text-pink-700 {
-            color: #be185d; /* */
+            color: #be185d; 
         }
         .text-pink-900 {
-            color: #831843; /* */
+            color: #831843; 
         }
         .hover\:text-pink-900:hover {
-            color: #831843; /* */
+            color: #831843; 
         }
         .bg-pink-600 {
-            background-color: #db2777; /* */
+            background-color: #db2777; 
         }
 
         /* Footer styles from artikel1.html */
         footer {
-            background-color: #db2777; /* */
-            color: white; /* */
-            padding-top: 2rem; /* */
-            padding-bottom: 2rem; /* */
+            background-color: #db2777; 
+            color: white; 
+            padding-top: 2rem; 
+            padding-bottom: 2rem; 
             margin-top: auto; /* Pushes footer to the bottom */
             width: 100%;
         }
         footer .max-w-7xl {
-            max-width: 7xl; /* */
-            margin-left: auto; /* */
-            margin-right: auto; /* */
-            padding-left: 1.5rem; /* */
-            padding-right: 1.5rem; /* */
-            display: flex; /* */
-            flex-direction: column; /* */
-            justify-content: space-between; /* */
-            align-items: center; /* */
-            gap: 1.5rem; /* */
+            max-width: 7xl; 
+            margin-left: auto; 
+            margin-right: auto; 
+            padding-left: 1.5rem; 
+            padding-right: 1.5rem; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 1.5rem; 
         }
-        @media (min-width: 768px) { /* md breakpoint */
+        @media (min-width: 768px) { 
             nav ul {
                 display: flex;
-                column-gap: 2rem; /* space-x-8 equivalent */
+                column-gap: 2rem;  
             }
             #mobile-menu {
                 display: none;
             }
             footer .max-w-7xl {
-                flex-direction: row; /* */
+                flex-direction: row; 
             }
         }
     </style>
@@ -254,7 +254,7 @@
     </footer>
 
     <script>
-        // Navbar mobile and desktop dropdown functionality from artikel1.html
+         
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
 
@@ -284,7 +284,7 @@
 
         if (dropdownToggleMobile) {
             dropdownToggleMobile.addEventListener('click', (event) => {
-                event.preventDefault(); // Prevent default link behavior
+                event.preventDefault(); 
                 dropdownMenuMobile.classList.toggle('hidden');
             });
         }

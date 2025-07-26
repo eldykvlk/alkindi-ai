@@ -1,23 +1,14 @@
-/* Styling umum yang mungkin juga digunakan oleh login.html, register.html */
+
 body {
-    /* These styles are now handled by the inline <style> block and TailwindCSS classes in kelola.html */
-    /* font-family: 'Arial', sans-serif; */
+
     margin: 0;
     padding: 0;
-    /* background-color: #f4f7f6; */
     color: #333;
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    /* min-height: 100vh; */
+ 
 }
 
 .container {
-    /* These styles are now set directly inline in kelola.html for consistency with admin.html */
-    /* background-color: #ffffff; */
-    /* padding: 30px; */
-    /* border-radius: 8px; */
-    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+
     width: 90%;
     max-width: 800px;
     margin: 20px auto;
@@ -36,13 +27,13 @@ hr {
     margin: 20px 0;
 }
 
-/* Styling khusus untuk bagian manajemen admin di kelola.html */
+
 .admin-management-section {
     margin-top: 20px;
 }
 
 .admin-list-container {
-    overflow-x: auto; /* Enable horizontal scrolling for tables on small screens */
+    overflow-x: auto; 
     margin-top: 20px;
 }
 
@@ -75,9 +66,9 @@ hr {
 
 .admin-actions {
     display: flex;
-    flex-wrap: wrap; /* Allow buttons to wrap */
+    flex-wrap: wrap; 
     gap: 8px;
-    justify-content: center; /* Center buttons horizontally */
+    justify-content: center;
     align-items: center;
 }
 
@@ -87,11 +78,11 @@ hr {
     border-radius: 5px;
     cursor: pointer;
     font-size: 0.9em;
-    white-space: nowrap; /* Prevent text wrapping inside buttons */
+    white-space: nowrap; 
 }
 
 .toggle-status-btn {
-    background-color: #28a745; /* Green for approve/disapprove */
+    background-color: #28a745; 
     color: white;
 }
 
@@ -100,7 +91,7 @@ hr {
 }
 
 .delete-admin-btn {
-    background-color: #dc3545; /* Red for delete */
+    background-color: #dc3545; 
     color: white;
 }
 
@@ -148,64 +139,3 @@ hr {
     background-color: #d32f2f;
 }
 
-/* Removing login/register specific styles if kelola.css is only for kelola.html */
-/* If this CSS file is shared, keep these. Otherwise, they are redundant. */
-/* .login-container, .register-container {
-    background-color: #ffffff;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 450px;
-    text-align: center;
-}
-
-.login-container h1, .register-container h1 {
-    color: #333;
-    margin-bottom: 30px;
-}
-
-.login-container form input, .register-container form input {
-    width: calc(100% - 20px);
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 16px;
-}
-
-.login-container button, .register-container button {
-    width: 100%;
-    padding: 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 18px;
-    transition: background-color 0.3s ease;
-}
-
-.login-container button:hover, .register-container button:hover {
-    background-color: #0056b3;
-}
-
-.login-container .message, .register-container .message {
-    margin-top: 20px;
-    color: red;
-    font-weight: bold;
-}
-
-.switch-form {
-    margin-top: 25px;
-    font-size: 1em;
-}
-
-.switch-form a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.switch-form a:hover {
-    text-decoration: underline;
-} */
