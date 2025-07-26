@@ -405,14 +405,22 @@
                 adminsToDisplay.forEach(admin => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td style="padding: 8px; border: 1px solid #ddd;">${admin.username || 'N/A'}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">${admin.admin === 'acc' ? 'Disetujui' : 'Menunggu'}</td>
-                        <td style="padding: 8px; border: 1px solid #ddd;">
-                            <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn" style="margin-right: 5px;">
-                                ${admin.admin === 'acc' ? 'Cabut Akses' : 'Berikan Akses'}
-                            </button>
-                            <button data-id="${admin.id}" class="delete-admin-btn" style="background-color: #dc3545; color: white;">Hapus</button>
-                        </td>
+<td class="p-2 border border-gray-300">${admin.username || 'N/A'}</td>
+<td class="p-2 border border-gray-300">${admin.admin === 'acc' ? 'Disetujui' : 'Menunggu'}</td>
+<td class="p-2 border border-gray-300">
+    <button data-id="${admin.id}" data-status="${admin.admin}" class="toggle-admin-status-btn
+        py-2 px-3 rounded-md cursor-pointer mr-1
+        font-bold transition-colors duration-300
+        ${admin.admin === 'acc' ? 'bg-red-600 hover:bg-red-700 text-white border border-red-600' : 'bg-green-600 hover:bg-green-700 text-white border border-green-600'}">
+        ${admin.admin === 'acc' ? 'Cabut Akses' : 'Berikan Akses'}
+    </button>
+    <button data-id="${admin.id}" class="delete-admin-btn
+        py-2 px-3 rounded-md cursor-pointer
+        bg-red-600 hover:bg-red-700 text-white font-bold
+        border border-red-600 transition-colors duration-300">
+        Hapus
+    </button>
+</td>
                     `;
                     adminTableBody.appendChild(row);
                 });
