@@ -376,7 +376,7 @@ const checkLogin = () => {
         return null;
     }
     if (loggedInUsernameSpan) {
-        loggedInUsernameSpan.textContent = `Welcome, ${user.username}`;
+        loggedInUsernameSpan.textContent = `Selamat datang, ${user.username}`;
     }
     return user;
 };
