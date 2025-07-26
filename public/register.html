@@ -4,23 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@700&amp;display=swap" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Comic Neue', cursive, sans-serif;
             display: flex;
+            flex-direction: column; /* Added to allow footer to stick to bottom */
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #f4f4f4;
+            background: linear-gradient(to bottom, #fbcfe8, #fef08a, #d9f991); /* Gradient from artikel1.html */
             margin: 0;
         }
-        .container {
+        .container-register {
             background-color: #fff;
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            width: 350px;
+            width: 350px; /* Keep the original width */
             text-align: center;
+            z-index: 1; /* Ensure container is above background */
+            margin: auto; /* Center the container vertically and horizontally */
         }
         h1 {
             color: #333;
@@ -37,7 +43,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #28a745; /* Green for register button */
+            background-color: #ec4899; /* Pink color from artikel1.html */
             color: white;
             border: none;
             border-radius: 4px;
@@ -46,7 +52,7 @@
             margin-top: 10px;
         }
         button:hover {
-            background-color: #218838;
+            background-color: #db2777; /* Darker pink on hover */
         }
         .message {
             margin-top: 15px;
@@ -58,17 +64,173 @@
             font-size: 0.9em;
         }
         .switch-form a {
-            color: #007bff;
+            color: #db2777; /* Pink color for links */
             cursor: pointer;
             text-decoration: none;
+        }
+        /* Navbar and Footer styles from artikel1.html */
+        header {
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            width: 100%;
+        }
+        nav {
+            max-width: 7xl;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        button#registerButton {
+           background-color: #ec4899;
+        }
+        
+        nav a {
+            text-decoration: none;
+        }
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        nav ul li a {
+            padding: 0.5rem 0;
+            display: block;
+        }
+        .text-pink-600 {
+            color: #db2777;
+        }
+        .text-pink-700 {
+            color: #be185d;
+        }
+        .text-pink-900 {
+            color: #831843;
+        }
+        .hover\:text-pink-900:hover {
+            color: #831843;
+        }
+        .bg-pink-600 {
+            background-color: #db2777;
+        }
+        footer {
+            background-color: #db2777;
+            color: white;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+            margin-top: auto; /* Pushes footer to the bottom */
+            width: 100%;
+        }
+        footer .max-w-7xl {
+            max-width: 7xl;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        @media (min-width: 768px) { /* md breakpoint */
+            nav ul {
+                display: flex;
+                space-x: 2rem;
+            }
+            #mobile-menu {
+                display: none;
+            }
+            footer .max-w-7xl {
+                flex-direction: row;
+            }
         }
     </style>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database-compat.js"></script>
 </head>
-<body>
-    <div class="container">
-        <h1>Register</h1>
+<body class="bg-gradient-to-b from-pink-200 via-yellow-200 to-green-200 min-h-screen flex flex-col">
+    <header class="bg-white bg-opacity-80 backdrop-blur-md shadow-md sticky top-0 z-50">
+        <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <a class="text-3xl font-extrabold text-pink-600 flex items-center gap-2" href="index.html">
+                <img src="image/logo-alkindi.png" alt="Alkindi Logo" class="h-14">
+            </a>
+            <ul class="hidden md:flex space-x-8 text-pink-700 font-semibold">
+                <li>
+                    <a class="hover:text-pink-900 transition" href="index.html">
+                        Beranda
+                    </a>
+                </li>
+                <li>
+                    <a class="hover:text-pink-900 transition" href="tentang-kami.html">
+                        Tentang kami
+                    </a>
+                </li>
+                <li>
+                    <a class="hover:text-pink-900 transition" href="bantuan.html">
+                        Bantuan
+                    </a>
+                </li>
+                <li class="relative group">
+                    <a class="hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-desktop">
+                        Lainnya
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </a>
+                    <div id="dropdown-menu-desktop" class="absolute hidden bg-white shadow-lg rounded-lg py-2 w-48 mt-2 -ml-4 z-10">
+                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
+                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
+                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="md:hidden text-pink-600 focus:outline-none" id="menu-btn">
+                <i class="fas fa-bars fa-2x">
+                </i>
+            </button>
+        </nav>
+        <div class="hidden md:hidden bg-white bg-opacity-90 backdrop-blur-md shadow-inner" id="mobile-menu">
+            <ul class="flex flex-col space-y-4 px-6 py-4 text-pink-700 font-semibold">
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="index.html">
+                        Beranda
+                    </a>
+                </li>
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="tentang-kami.html">
+                        Tentang kami
+                    </a>
+                </li>
+                <li>
+                    <a class="block hover:text-pink-900 transition" href="bantuan.html">
+                        Bantuan
+                    </a>
+                </li>
+                <li class="relative">
+                    <a class="block hover:text-pink-900 transition cursor-pointer flex items-center gap-1" id="dropdown-toggle-mobile">
+                        Lainnya
+                        <i class="fas fa-chevron-down text-xs ml-1"></i>
+                    </a>
+                    <div id="dropdown-menu-mobile" class="hidden bg-white rounded-lg py-2 w-full mt-2 pl-4">
+                        <a href="https://alkindikids.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids</a>
+                        <a href="https://alkindionlinepreschool.com/" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Web Alkindikids Online Preschools</a>
+                        <a href="#" class="block px-4 py-2 text-pink-700 hover:bg-pink-100 transition">Staff Panel</a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </header>
+
+    <div class="container-register">
+        <h1>Register Staff</h1>
         <form id="registerForm">
             <input type="text" id="username" placeholder="Username" required>
             <input type="password" id="password" placeholder="Password" required>
@@ -76,16 +238,74 @@
         </form>
         <p class="message" id="errorMessage"></p>
         <div class="switch-form">
-            <p>Already have an account? <a href="login.html">Login here</a></p>
+            <p>Sudah punya akun staf? <a href="login.html">Login here</a></p>
         </div>
     </div>
 
+    <footer class="bg-pink-600 text-white py-8 mt-auto">
+        <div class="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-6">
+            <p class="text-center md:text-left">
+                ©2025 Alkindi AI. All rights reserved.
+            </p>
+            <div class="flex space-x-6 text-2xl">
+                <a aria-label="WhatsApp" class="hover:text-pink-300 transition" href="https://wa.me/6287871367837">
+                    <i class="fab fa-whatsapp-square">
+                    </i>
+                </a>
+                <a aria-label="Instagram" class="hover:text-pink-300 transition" href="https://www.instagram.com/alkindikids/">
+                    <i class="fab fa-instagram-square">
+                    </i>
+                </a>
+                <a aria-label="YouTube" class="hover:text-pink-300 transition" href="https://www.youtube.com/channel/UCdkSM5ieNzioBzrFKpQe1yQ">
+                    <i class="fab fa-youtube-square">
+                    </i>
+                </a>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        let firebaseConfig = {}; // Deklarasikan di luar untuk lingkup yang lebih luass
-    
+        // Navbar mobile and desktop dropdown functionality
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
+
+        const dropdownToggleDesktop = document.getElementById('dropdown-toggle-desktop');
+        const dropdownMenuDesktop = document.getElementById('dropdown-menu-desktop');
+
+        if (dropdownToggleDesktop) {
+            dropdownToggleDesktop.addEventListener('click', () => {
+                dropdownMenuDesktop.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (event) => {
+                if (!dropdownToggleDesktop.contains(event.target) && !dropdownMenuDesktop.contains(event.target)) {
+                    dropdownMenuDesktop.classList.add('hidden');
+                }
+            });
+        }
+
+        const dropdownToggleMobile = document.getElementById('dropdown-toggle-mobile');
+        const dropdownMenuMobile = document.getElementById('dropdown-menu-mobile');
+
+        if (dropdownToggleMobile) {
+            dropdownToggleMobile.addEventListener('click', (event) => {
+                event.preventDefault();
+                dropdownMenuMobile.classList.toggle('hidden');
+            });
+        }
+
+        // Firebase register script (original script from register.html)
+        let firebaseConfig = {};
+
         async function fetchFirebaseConfig() {
             try {
-                const response = await fetch('/.netlify/functions/login-config'); // Mengambil dari fungsi yang sama
+                const response = await fetch('/.netlify/functions/login-config');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
@@ -96,55 +316,49 @@
                 document.getElementById('errorMessage').textContent = 'Gagal memuat konfigurasi. Silakan coba lagi.';
             }
         }
-    
+
         function initializeFirebase() {
-            // Inisialisasi Firebase hanya setelah konfigurasi dimuat
             firebase.initializeApp(firebaseConfig);
             const database = firebase.database();
-            const adminRef = database.ref('admin'); // Path to your admin users
-    
+            const adminRef = database.ref('admin');
+
             const registerForm = document.getElementById('registerForm');
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
             const errorMessage = document.getElementById('errorMessage');
-    
+
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                errorMessage.textContent = ''; // Clear previous errors
-    
+                errorMessage.textContent = '';
+
                 const username = usernameInput.value;
                 const password = passwordInput.value;
-    
+
                 try {
                     const snapshot = await adminRef.orderByChild('username').equalTo(username).once('value');
                     if (snapshot.exists()) {
                         errorMessage.textContent = 'Nama pengguna sudah ada. Silakan gunakan nama pengguna lain.';
                         return;
                     }
-    
-                    const newAdminRef = adminRef.push(); // Generate a unique ID
+
+                    const newAdminRef = adminRef.push();
                     await newAdminRef.set({
-                        id: newAdminRef.key, // Use the generated key as the ID
+                        id: newAdminRef.key,
                         username: username,
-                        password: password, // In a real application, HASH THIS PASSWORD!
-                        admin: "not" // Default status for new registrations
+                        password: password,
+                        admin: "not"
                     });
                     errorMessage.style.color = 'green';
                     errorMessage.textContent = 'Pendaftaran berhasil! Silakan tunggu persetujuan admin untuk login.';
                     usernameInput.value = '';
                     passwordInput.value = '';
-                    // Optional: Redirect to login page after successful registration
-                    // setTimeout(() => {
-                    //     window.location.href = 'login.html';
-                    // }, 3000);
                 } catch (error) {
                     console.error('Registration error:', error);
                     errorMessage.textContent = 'Pendaftaran gagal. Silakan coba lagi.';
                 }
             });
         }
-    
-        // Panggil fungsi untuk mengambil konfigurasi saat halaman dimuat
+
         document.addEventListener('DOMContentLoaded', fetchFirebaseConfig);
     </script>
 </body>
