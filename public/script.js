@@ -21,21 +21,25 @@ form.addEventListener("submit", async function (e) {
   .filter(Boolean) // hilangkan null
   .join("\n");
 
-  const prompt = `
-Berikut daftar buku islami untuk anak dengan ID masing-masing:
+  const prompt = `Berikut daftar buku islami untuk anak dengan ID masing-masing:
 
-${daftarJudul}
-
-Dari harapan berikut:
-"${harapanUser}"
-
-Berikan solusi singkat dan relevan dari harapan tersebut, serta sebutkan satu hadits yang berkaitan. Setelah itu, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
-
-Contoh format output:
-Solusi: [Solusi singkat]
-Hadits: [Teks hadits]
-ID Buku: [ID buku]
-`;
+  ${daftarJudul}
+  
+  Dari harapan berikut:
+  "${harapanUser}"
+  
+  Berikan solusi singkat dan relevan dari harapan tersebut, dengan format 5 poin study plan yang terstruktur dan bernomor. Setelah itu, sebutkan satu hadits yang berkaitan. Terakhir, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
+  
+  Contoh format output:
+  Solusi:
+  1. [Poin solusi 1]
+  2. [Poin solusi 2]
+  3. [Poin solusi 3]
+  4. [Poin solusi 4]
+  5. [Poin solusi 5]
+  Hadits: [Teks hadits]
+  ID Buku: [ID buku]
+  `;
 
   // Kirim prompt ke Gemini (via Netlify Function)
   const geminiRes = await fetch("/.netlify/functions/gemini", {
