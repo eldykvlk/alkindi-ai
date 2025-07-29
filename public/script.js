@@ -12,7 +12,7 @@ form.addEventListener("submit", async function (e) {
       <div class="skeleton"></div>
       <div class="skeleton" style="height: 20px; width: 60%; margin-top: 15px;"></div>
       <div class="skeleton" style="height: 20px; width: 80%; margin-top: 10px;"></div>
-    `;
+    `; 
   // Ambil buku dari Firebase (via Netlify Function)
   const firebaseRes = await fetch("/.netlify/functions/firebase");
   const books = await firebaseRes.json();
@@ -29,11 +29,10 @@ ${daftarJudul}
 Dari harapan berikut:
 "${harapanUser}"
 
-Berikan solusi singkat dan relevan dari harapan tersebut dalam dua paragraf. Setelah itu, sebutkan satu hadits yang berkaitan. Terakhir, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
+Berikan solusi singkat dan relevan dari harapan tersebut, serta sebutkan satu hadits yang berkaitan. Setelah itu, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
 
 Contoh format output:
-Solusi: [Paragraf pertama solusi]
-[Paragraf kedua solusi]
+Solusi: [Solusi singkat]
 Hadits: [Teks hadits]
 ID Buku: [ID buku]
 `;
@@ -49,7 +48,7 @@ ID Buku: [ID buku]
   const responseText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
   // Parsing respons untuk mendapatkan solusi, hadits, dan ID buku
-  const solusiMatch = responseText.match(/Solusi: ([\s\S]+?)(?=Hadits:)/); // This regex captures everything after "Solusi:" until "Hadits:"
+  const solusiMatch = responseText.match(/Solusi: (.+)/);
   const haditsMatch = responseText.match(/Hadits: (.+)/);
   const idMatch = responseText.match(/ID Buku: (\d+)/);
 
@@ -74,3 +73,4 @@ ID Buku: [ID buku]
     <p><a href="${buku.orderLink}" target="_blank" class="beli-btn">📘 Pesan buku ini</a></p>
   `;
 });
+
