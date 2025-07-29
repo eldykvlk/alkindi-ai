@@ -12,7 +12,7 @@ form.addEventListener("submit", async function (e) {
       <div class="skeleton"></div>
       <div class="skeleton" style="height: 20px; width: 60%; margin-top: 15px;"></div>
       <div class="skeleton" style="height: 20px; width: 80%; margin-top: 10px;"></div>
-    `; 
+    `;
   // Ambil buku dari Firebase (via Netlify Function)
   const firebaseRes = await fetch("/.netlify/functions/firebase");
   const books = await firebaseRes.json();
@@ -21,25 +21,22 @@ form.addEventListener("submit", async function (e) {
   .filter(Boolean) // hilangkan null
   .join("\n");
 
-  const prompt = `Berikut daftar buku islami untuk anak dengan ID masing-masing:
+  const prompt = `
+Berikut daftar buku islami untuk anak dengan ID masing-masing:
 
-  ${daftarJudul}
-  
-  Dari harapan berikut:
-  "${harapanUser}"
-  
-  Berikan solusi singkat dan relevan dari harapan tersebut, dengan format 5 poin study plan yang terstruktur dan bernomor. Setelah itu, sebutkan satu hadits yang berkaitan. Terakhir, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
-  
-  Contoh format output:
-  Solusi:
-  1. [Poin solusi 1]
-  2. [Poin solusi 2]
-  3. [Poin solusi 3]
-  4. [Poin solusi 4]
-  5. [Poin solusi 5]
-  Hadits: [Teks hadits]
-  ID Buku: [ID buku]
-  `;
+${daftarJudul}
+
+Dari harapan berikut:
+"${harapanUser}"
+
+Berikan solusi singkat dan relevan dari harapan tersebut dalam dua paragraf. Setelah itu, sebutkan satu hadits yang berkaitan. Terakhir, promosikan pengambilan buku yang paling relevan (hanya 1 buku) dari daftar di atas yang sesuai dengan harapan tersebut, dengan menyebutkan ID bukunya saja.
+
+Contoh format output:
+Solusi: [Paragraf pertama solusi]
+[Paragraf kedua solusi]
+Hadits: [Teks hadits]
+ID Buku: [ID buku]
+`;
 
   // Kirim prompt ke Gemini (via Netlify Function)
   const geminiRes = await fetch("/.netlify/functions/gemini", {
@@ -52,7 +49,7 @@ form.addEventListener("submit", async function (e) {
   const responseText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
   // Parsing respons untuk mendapatkan solusi, hadits, dan ID buku
-  const solusiMatch = responseText.match(/Solusi: (.+)/);
+  const solusiMatch = responseText.match(/Solusi: ([\s\S]+?)(?=Hadits:)/); // This regex captures everything after "Solusi:" until "Hadits:"
   const haditsMatch = responseText.match(/Hadits: (.+)/);
   const idMatch = responseText.match(/ID Buku: (\d+)/);
 
@@ -77,4 +74,3 @@ form.addEventListener("submit", async function (e) {
     <p><a href="${buku.orderLink}" target="_blank" class="beli-btn">📘 Pesan buku ini</a></p>
   `;
 });
-
